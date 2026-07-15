@@ -25,12 +25,18 @@ type PickRow = {
   isPremium: boolean;
   date: string;
   modelVersion: string | null;
+  result: string;
+  oddsAmerican: number;
+  profitUnits: number | null;
 };
+
+type GradeResult = "WIN" | "LOSS" | "PUSH" | "VOID" | "PENDING";
 
 export function AdminClient({
   stats,
   users,
   recentPicks,
+  pendingPicks,
 }: {
   stats: {
     users: number;
@@ -41,9 +47,12 @@ export function AdminClient({
   };
   users: UserRow[];
   recentPicks: PickRow[];
+  pendingPicks: PickRow[];
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"picks" | "odds" | null>(null);
+  const [loading, setLoading] = useState<"picks" | "odds" | "digest" | string | null>(
+    null,
+  );
   const [message, setMessage] = useState<string | null>(null);
 
   async function generatePicks() {
@@ -101,6 +110,65 @@ export function AdminClient({
     }
   }
 
+  async function sendDigest() {
+    setLoading("digest");
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/send-digest", { method: "POST" });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        skipped?: boolean;
+        reason?: string;
+        sent?: number;
+        failed?: number;
+        recipients?: number;
+        error?: string;
+      };
+      if (!res.ok) {
+        setMessage(data.error ?? "Digest failed");
+        return;
+      }
+      if (data.skipped) {
+        setMessage(`Digest skipped: ${data.reason ?? "n/a"}`);
+      } else {
+        setMessage(
+          `Digest sent ${data.sent}/${data.recipients} (failed ${data.failed})`,
+        );
+      }
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  async function gradePick(pickId: string, result: GradeResult) {
+    setLoading(`grade:${pickId}:${result}`);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/grade-pick", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pickId, result }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        pick?: { eventName: string; result: string; profitUnits: number | null };
+        error?: string;
+      };
+      if (!res.ok) {
+        setMessage(data.error ?? "Grade failed");
+        return;
+      }
+      const units =
+        data.pick?.profitUnits == null
+          ? ""
+          : ` (${data.pick.profitUnits >= 0 ? "+" : ""}${data.pick.profitUnits.toFixed(2)}u)`;
+      setMessage(`Graded ${data.pick?.eventName}: ${data.pick?.result}${units}`);
+      router.refresh();
+    } finally {
+      setLoading(null);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -129,7 +197,58 @@ export function AdminClient({
           <Button variant="secondary" onClick={ingestOdds} disabled={loading !== null}>
             {loading === "odds" ? "Ingesting…" : "Ingest odds snapshots"}
           </Button>
-          {message && <p className="text-sm text-muted">{message}</p>}
+          <Button variant="secondary" onClick={sendDigest} disabled={loading !== null}>
+            {loading === "digest" ? "Sending…" : "Send digests"}
+          </Button>
+          {message && <p className="w-full text-sm text-muted">{message}</p>}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Grade pending picks</CardTitle>
+          <CardDescription>
+            Mark WIN / LOSS / PUSH / VOID after games settle. Updates public /record.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {pendingPicks.length === 0 ? (
+            <p className="text-sm text-muted">No pending picks.</p>
+          ) : (
+            pendingPicks.map((p) => (
+              <div
+                key={p.id}
+                className="flex flex-col gap-3 rounded-lg border border-card-border bg-background/40 px-3 py-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0 text-sm">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="muted">{p.sport}</Badge>
+                    <span className="text-xs text-muted">
+                      {p.date.slice(0, 10)}
+                      {p.isPremium ? " · PRO" : ""}
+                    </span>
+                  </div>
+                  <div className="mt-1 font-medium">{p.eventName}</div>
+                  <div className="text-accent">
+                    {p.pickSide} · conf {p.confidence.toFixed(0)}%
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(["WIN", "LOSS", "PUSH", "VOID"] as const).map((r) => (
+                    <Button
+                      key={r}
+                      size="sm"
+                      variant={r === "WIN" ? "default" : "secondary"}
+                      disabled={loading !== null}
+                      onClick={() => gradePick(p.id, r)}
+                    >
+                      {loading === `grade:${p.id}:${r}` ? "…" : r}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
         </CardContent>
       </Card>
 
@@ -186,7 +305,8 @@ export function AdminClient({
                 </Badge>
                 {p.eventName} · <span className="text-accent">{p.pickSide}</span>
               </div>
-              <div className="text-xs text-muted">
+              <div className="flex items-center gap-2 text-xs text-muted">
+                <ResultChip result={p.result} />
                 {p.confidence.toFixed(0)}% · {p.modelVersion}
                 {p.isPremium ? " · PRO" : ""}
               </div>
@@ -196,6 +316,14 @@ export function AdminClient({
       </Card>
     </div>
   );
+}
+
+function ResultChip({ result }: { result: string }) {
+  if (result === "WIN") return <Badge variant="accent">WIN</Badge>;
+  if (result === "LOSS") return <Badge variant="danger">LOSS</Badge>;
+  if (result === "PUSH") return <Badge variant="warning">PUSH</Badge>;
+  if (result === "VOID") return <Badge variant="muted">VOID</Badge>;
+  return <Badge variant="muted">PENDING</Badge>;
 }
 
 function Metric({

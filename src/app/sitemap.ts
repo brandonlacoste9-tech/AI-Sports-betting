@@ -6,6 +6,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${base}/odds`, lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
     {
+      url: `${base}/record`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    {
       url: `${base}/docs/api`,
       lastModified: new Date(),
       changeFrequency: "weekly",

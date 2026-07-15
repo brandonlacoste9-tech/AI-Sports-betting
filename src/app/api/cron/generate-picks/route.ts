@@ -1,27 +1,24 @@
 import { NextResponse } from "next/server";
 import { generateAndStorePicks } from "@/lib/ai/generate-picks";
+import { assertCronAuthorized } from "@/lib/cron-auth";
+import { sendDailyPickDigests } from "@/lib/email/digest";
 
 /**
- * Cron-ready endpoint for Vercel Cron.
- * Secure with CRON_SECRET header when deployed.
+ * Cron: generate AI picks from live odds, then attempt digest email.
  */
 export async function GET(req: Request) {
-  const secret = process.env.CRON_SECRET;
-  if (secret) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  } else if (process.env.NODE_ENV === "production") {
-    return NextResponse.json(
-      { error: "CRON_SECRET required in production" },
-      { status: 401 },
-    );
-  }
+  const denied = assertCronAuthorized(req);
+  if (denied) return denied;
 
   try {
     const result = await generateAndStorePicks({ regenerate: true });
-    return NextResponse.json({ ok: true, ...result });
+    let digest: Awaited<ReturnType<typeof sendDailyPickDigests>> | null = null;
+    try {
+      digest = await sendDailyPickDigests();
+    } catch (err) {
+      console.error("[cron generate-picks] digest after generate failed", err);
+    }
+    return NextResponse.json({ ok: true, ...result, digest });
   } catch (err) {
     console.error("[cron generate-picks]", err);
     return NextResponse.json(
@@ -29,4 +26,8 @@ export async function GET(req: Request) {
       { status: 500 },
     );
   }
+}
+
+export async function POST(req: Request) {
+  return GET(req);
 }

@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
-import { ingestOddsSnapshots } from "@/lib/odds/ingest";
 import { assertCronAuthorized } from "@/lib/cron-auth";
+import { sendDailyPickDigests } from "@/lib/email/digest";
 
 /**
- * Cron: snapshot odds into Neon for line history + public board + developer API.
+ * Cron: email daily pick digests to Basic/Pro subscribers (Resend).
  */
 export async function GET(req: Request) {
   const denied = assertCronAuthorized(req);
   if (denied) return denied;
 
   try {
-    const result = await ingestOddsSnapshots();
+    const result = await sendDailyPickDigests();
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
-    console.error("[cron ingest-odds]", err);
+    console.error("[cron digest]", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Ingest failed" },
+      { error: err instanceof Error ? err.message : "Digest failed" },
       { status: 500 },
     );
   }

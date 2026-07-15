@@ -19,6 +19,7 @@ const serverSchema = z.object({
   STRIPE_PRICE_PRO: z.string().optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
+  CRON_SECRET: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().default("http://localhost:3000"),
   NEXT_PUBLIC_APP_NAME: z.string().default("BetEdge AI"),
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),

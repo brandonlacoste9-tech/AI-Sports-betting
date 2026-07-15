@@ -27,6 +27,9 @@ export function Header() {
           <Link href="/odds" className="hover:text-foreground">
             {t.nav.odds}
           </Link>
+          <Link href="/record" className="hover:text-foreground">
+            {t.nav.record}
+          </Link>
           <Link href="/docs/api" className="hover:text-foreground">
             {t.nav.api}
           </Link>

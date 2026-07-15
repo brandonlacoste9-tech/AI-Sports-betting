@@ -14,7 +14,13 @@ export function Footer() {
           <div className="font-semibold">
             BetEdge <span className="text-accent">AI</span>
           </div>
-          <div className="flex gap-4 text-sm text-muted">
+          <div className="flex flex-wrap gap-4 text-sm text-muted">
+            <Link href="/record" className="hover:text-foreground">
+              {t.nav.record}
+            </Link>
+            <Link href="/odds" className="hover:text-foreground">
+              {t.nav.odds}
+            </Link>
             <Link href="/#pricing" className="hover:text-foreground">
               {t.nav.pricing}
             </Link>
