@@ -95,33 +95,32 @@ const tiers = [
 export default function LandingPage() {
   return (
     <div className="bg-grid">
-      {/* Hero — multi-sport collage faded behind copy */}
-      <section className="relative overflow-hidden border-b border-card-border/40">
+      {/* Hero — multi-sport collage (brighter so sports read clearly) */}
+      <section className="relative min-h-[70vh] overflow-hidden border-b border-card-border/40 md:min-h-[78vh]">
         <div className="absolute inset-0">
           <Image
             src="/images/hero-sports.jpg"
-            alt=""
+            alt="Multi-sport collage: football, basketball, baseball, hockey, soccer, MMA"
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center opacity-40"
+            className="object-cover object-center brightness-110 contrast-110 saturate-125"
           />
-          {/* Fade layers so headline stays readable */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/85 to-background" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--background)_72%)]" />
-          <div className="absolute inset-0 bg-background/30" />
+          {/* Light scrim only — keep image visible, ease into page bottom */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-background" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 md:pb-28 md:pt-24">
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="relative mx-auto flex min-h-[70vh] max-w-6xl items-center px-4 py-16 md:min-h-[78vh] md:py-24">
+          <div className="mx-auto w-full max-w-3xl rounded-2xl border border-white/10 bg-black/55 px-6 py-10 text-center shadow-2xl shadow-black/50 backdrop-blur-md md:px-10 md:py-12">
             <Badge variant="accent" className="mb-4 shadow-lg shadow-black/40">
               <Sparkles className="mr-1 h-3 w-3" /> AI-powered betting intelligence
             </Badge>
-            <h1 className="text-balance text-4xl font-bold tracking-tight drop-shadow-[0_2px_24px_rgba(0,0,0,0.85)] md:text-6xl">
+            <h1 className="text-balance text-4xl font-bold tracking-tight text-white drop-shadow-md md:text-6xl">
               Daily sports picks with{" "}
               <span className="text-accent">real edge analysis</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted drop-shadow-[0_1px_12px_rgba(0,0,0,0.9)]">
+            <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-zinc-200">
               BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks
               for NFL, NBA, MLB, NHL, UFC, and Soccer — so you stop doomscrolling research at
               midnight.
@@ -138,8 +137,8 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </div>
-            <div className="mt-6 rounded-xl border border-card-border/50 bg-background/50 px-4 py-3 backdrop-blur-sm">
-              <Disclaimer className="mx-auto max-w-xl text-center" />
+            <div className="mt-6 rounded-xl border border-white/10 bg-black/40 px-4 py-3">
+              <Disclaimer className="mx-auto max-w-xl text-center text-zinc-400" />
             </div>
           </div>
         </div>
