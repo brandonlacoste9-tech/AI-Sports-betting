@@ -1,17 +1,20 @@
 import { getMockOddsEvents, type OddsEvent } from "@/lib/odds/mock-data";
 import type { Sport } from "@prisma/client";
 
-const SPORT_KEYS: Partial<Record<Sport, string>> = {
+const SPORT_KEYS: Record<Sport, string> = {
   NFL: "americanfootball_nfl",
   NBA: "basketball_nba",
   MLB: "baseball_mlb",
   NHL: "icehockey_nhl",
+  UFC: "mma_mixed_martial_arts",
   SOCCER: "soccer_epl",
-  // UFC often unavailable on free Odds API keys — mock used
 };
+
+const DEFAULT_SPORTS: Sport[] = ["NFL", "NBA", "MLB", "NHL", "UFC", "SOCCER"];
 
 /**
  * Fetch odds from The Odds API when ODDS_API_KEY is set; otherwise mock slate.
+ * Caps games per sport to conserve free-tier quota.
  */
 export async function fetchOddsEvents(sports?: Sport[]): Promise<{
   events: OddsEvent[];
@@ -22,7 +25,7 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
     return { events: getMockOddsEvents(), source: "mock" };
   }
 
-  const targetSports = sports ?? (["NFL", "NBA", "MLB", "NHL", "SOCCER"] as Sport[]);
+  const targetSports = sports ?? DEFAULT_SPORTS;
   const events: OddsEvent[] = [];
 
   for (const sport of targetSports) {
@@ -33,7 +36,11 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
       const url = new URL(`https://api.the-odds-api.com/v4/sports/${key}/odds`);
       url.searchParams.set("apiKey", apiKey);
       url.searchParams.set("regions", "us");
-      url.searchParams.set("markets", "h2h,spreads,totals");
+      // h2h only for MMA (spreads/totals often empty); full markets for team sports
+      url.searchParams.set(
+        "markets",
+        sport === "UFC" ? "h2h" : "h2h,spreads,totals",
+      );
       url.searchParams.set("oddsFormat", "american");
 
       const res = await fetch(url.toString(), { next: { revalidate: 300 } });
@@ -57,7 +64,8 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
         }>;
       }>;
 
-      for (const game of data.slice(0, 5)) {
+      // Limit per sport — free tier is request-based
+      for (const game of data.slice(0, 4)) {
         const book = game.bookmakers[0];
         if (!book) continue;
         events.push({
@@ -83,12 +91,9 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
     }
   }
 
-  // Always include UFC mock + fill if API returned nothing
-  const mock = getMockOddsEvents();
   if (events.length === 0) {
-    return { events: mock, source: "mock" };
+    return { events: getMockOddsEvents(), source: "mock" };
   }
 
-  const ufc = mock.filter((e) => e.sport === "UFC");
-  return { events: [...events, ...ufc], source: "the-odds-api" };
+  return { events, source: "the-odds-api" };
 }
