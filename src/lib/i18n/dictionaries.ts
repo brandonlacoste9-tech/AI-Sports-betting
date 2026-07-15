@@ -30,7 +30,13 @@ export type Dictionary = {
     language: string;
   };
   disclaimer: string;
-  footer: { notSportsbook: string };
+  footer: { notSportsbook: string; partner: string };
+  affiliate: {
+    partnerLabel: string;
+    stakeCta: string;
+    stakeBody: string;
+    disclosure: string;
+  };
   landing: {
     badge: string;
     heroTitleBefore: string;
@@ -148,6 +154,14 @@ const en: Dictionary = {
     "For entertainment purposes only. Gambling involves risk. Past performance does not guarantee future results. You must be 18+/21+ (depending on jurisdiction) to use sports betting services. Bet responsibly.",
   footer: {
     notSportsbook: "Not a sportsbook. Tips & analytics only.",
+    partner: "Bet on Stake",
+  },
+  affiliate: {
+    partnerLabel: "Official partner",
+    stakeCta: "Open Stake",
+    stakeBody:
+      "Ready to action a pick? Place bets on Stake — crypto sportsbook, our affiliate partner.",
+    disclosure: "Affiliate link · 18+/21+ · Terms apply · Gamble responsibly",
   },
   landing: {
     badge: "AI-powered betting intelligence",
@@ -330,6 +344,14 @@ const fr: Dictionary = {
     "À des fins de divertissement seulement. Les paris comportent des risques. Les rÃ©sultats passÃ©s ne garantissent pas les rÃ©sultats futurs. Vous devez avoir 18 ans et + / 21 ans et + (selon la juridiction) pour utiliser des services de paris sportifs. Pariez de faÃ§on responsable.",
   footer: {
     notSportsbook: "Pas un site de paris. Conseils et analyses seulement.",
+    partner: "Parier sur Stake",
+  },
+  affiliate: {
+    partnerLabel: "Partenaire officiel",
+    stakeCta: "Ouvrir Stake",
+    stakeBody:
+      "Prêt à jouer un choix? Placez vos paris sur Stake — sportsbook crypto, notre partenaire affilié.",
+    disclosure: "Lien d'affiliation · 18+/21+ · Conditions · Jouez de façon responsable",
   },
   landing: {
     badge: "Intelligence de paris propulsée par l'IA",

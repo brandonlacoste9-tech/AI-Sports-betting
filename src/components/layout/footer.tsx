@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { Disclaimer } from "@/components/shared/disclaimer";
+import { AFFILIATES } from "@/lib/affiliates";
 import { useT } from "@/components/providers/locale-provider";
 
 export function Footer() {
   const t = useT();
+  const stake = AFFILIATES.stake;
 
   return (
     <footer className="border-t border-card-border bg-background">
@@ -24,6 +26,14 @@ export function Footer() {
             <Link href="/#pricing" className="hover:text-foreground">
               {t.nav.pricing}
             </Link>
+            <a
+              href={stake.url}
+              target="_blank"
+              rel={stake.rel}
+              className="text-accent hover:underline"
+            >
+              {t.footer.partner}
+            </a>
             <Link href="/login" className="hover:text-foreground">
               {t.nav.login}
             </Link>
@@ -34,7 +44,15 @@ export function Footer() {
         </div>
         <Disclaimer />
         <p className="text-xs text-muted/70">
-          © {new Date().getFullYear()} BetEdge AI. {t.footer.notSportsbook}
+          © {new Date().getFullYear()} BetEdge AI. {t.footer.notSportsbook} ·{" "}
+          <a
+            href={stake.url}
+            target="_blank"
+            rel={stake.rel}
+            className="hover:text-foreground"
+          >
+            {t.affiliate.disclosure}
+          </a>
         </p>
       </div>
     </footer>

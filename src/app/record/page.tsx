@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PerformanceCard } from "@/components/dashboard/performance-card";
+import { StakeAffiliateCta } from "@/components/shared/affiliate-cta";
 import { formatAmericanOdds } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -84,6 +85,8 @@ export default async function RecordPage() {
         title="All-time performance"
         description="Recalculated whenever an admin grades a pick."
       />
+
+      <StakeAffiliateCta />
 
       <Card>
         <CardHeader>

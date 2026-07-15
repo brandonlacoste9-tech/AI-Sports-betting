@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer } from "@/components/shared/disclaimer";
+import { StakeAffiliateCta } from "@/components/shared/affiliate-cta";
 import { PicksList, type PickCardData } from "@/components/dashboard/picks-list";
 import { PerformanceCard } from "@/components/dashboard/performance-card";
 import { BankrollCalculator } from "@/components/dashboard/bankroll-calculator";
@@ -61,6 +62,7 @@ export function DashboardShell({
       </div>
 
       <Disclaimer />
+      <StakeAffiliateCta />
 
       <PerformanceCard
         wins={perf.wins}

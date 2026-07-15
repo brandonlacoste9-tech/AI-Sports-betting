@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer } from "@/components/shared/disclaimer";
+import { StakeAffiliateCta } from "@/components/shared/affiliate-cta";
 import { useT } from "@/components/providers/locale-provider";
 import {
   Activity,
@@ -153,7 +154,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-16">
+      <section className="mx-auto max-w-6xl space-y-6 px-4 py-16">
+        <StakeAffiliateCta />
         <Card className="overflow-hidden border-accent/20">
           <CardContent className="flex flex-col items-start justify-between gap-6 p-8 md:flex-row md:items-center">
             <div>
