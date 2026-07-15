@@ -85,7 +85,7 @@ async function callGrok(events: OddsEvent[], slateDate: string): Promise<Generat
     return mockAiPicks(events);
   }
 
-  const model = process.env.XAI_MODEL ?? "grok-3";
+  const model = process.env.XAI_MODEL ?? "grok-4.3";
   const res = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -149,7 +149,7 @@ export async function generateAndStorePicks(options?: {
   const { events, source } = await fetchOddsEvents();
   const generated = await callGrok(events, slateIso);
   const modelVersion = process.env.XAI_API_KEY
-    ? (process.env.XAI_MODEL ?? "grok-2-latest")
+    ? (process.env.XAI_MODEL ?? "grok-4.3")
     : "mock-heuristic-v1";
 
   if (regenerate) {
