@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "BetEdge developer odds API — authentication, endpoints, and rate limits.",
 };
 
-const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://sparkling-seahorse-04a44d.netlify.app";
+const base = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.betedge-ai.com";
 
 export default function ApiDocsPage() {
   return (

@@ -81,13 +81,19 @@ See `.env.example` for all variables.
 
 API keys are created under **Settings** (hashed at rest; raw key shown once).
 
-## Deploy (Vercel + Neon)
+## Production URL
+
+**https://www.betedge-ai.com** (Netlify + custom domain)
+
+Set `NEXT_PUBLIC_APP_URL=https://www.betedge-ai.com` in production.
+
+## Deploy (Netlify + Neon)
 
 1. Create Neon DB → set `DATABASE_URL`
-2. Import repo to Vercel → set env vars
-3. `prisma db push` via build (`postinstall` generates client)
-4. Stripe webhook → `https://YOUR_DOMAIN/api/stripe/webhook`
-5. Optional: set `CRON_SECRET` for `/api/cron/generate-picks` (daily 14:00 UTC in `vercel.json`)
+2. Connect repo on Netlify → set env vars
+3. `prisma generate` runs on build (`postinstall`)
+4. Stripe webhook → `https://www.betedge-ai.com/api/stripe/webhook`
+5. Optional: set `CRON_SECRET` for `/api/cron/generate-picks` and `/api/cron/ingest-odds`
 
 ## License
 
