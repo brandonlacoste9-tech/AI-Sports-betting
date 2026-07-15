@@ -20,6 +20,9 @@ export function Footer() {
             <Link href="/record" className="hover:text-foreground">
               {t.nav.record}
             </Link>
+            <Link href="/games" className="hover:text-foreground">
+              {t.nav.games}
+            </Link>
             <Link href="/odds" className="hover:text-foreground">
               {t.nav.odds}
             </Link>

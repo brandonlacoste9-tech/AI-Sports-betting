@@ -79,6 +79,11 @@ export default function LandingPage() {
                   {L.ctaFree}
                 </Button>
               </Link>
+              <Link href="/games">
+                <Button size="lg" variant="secondary">
+                  Play free games
+                </Button>
+              </Link>
               <Link href="/login">
                 <Button size="lg" variant="secondary">
                   {L.ctaLogin}

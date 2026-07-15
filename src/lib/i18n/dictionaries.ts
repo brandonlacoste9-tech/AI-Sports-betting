@@ -11,6 +11,7 @@ export type Dictionary = {
     api: string;
     pricing: string;
     record: string;
+    games: string;
     dashboard: string;
     lineMoves: string;
     settings: string;
@@ -132,6 +133,7 @@ const en: Dictionary = {
     api: "API",
     pricing: "Pricing",
     record: "Record",
+    games: "Games",
     dashboard: "Dashboard",
     lineMoves: "Line moves",
     settings: "Settings",
@@ -322,6 +324,7 @@ const fr: Dictionary = {
     api: "API",
     pricing: "Tarifs",
     record: "Bilan",
+    games: "Jeux",
     dashboard: "Tableau de bord",
     lineMoves: "Mouvements de cotes",
     settings: "Paramètres",
