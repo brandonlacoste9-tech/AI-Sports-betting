@@ -1,5 +1,5 @@
-import { getMockOddsEvents, type OddsEvent } from "@/lib/odds/mock-data";
 import { fetchApiSportsSoccerEvents } from "@/lib/odds/api-sports";
+import type { OddsEvent } from "@/lib/odds/types";
 import type { Sport } from "@prisma/client";
 
 const SPORT_KEYS: Record<Sport, string> = {
@@ -13,13 +13,11 @@ const SPORT_KEYS: Record<Sport, string> = {
 
 const DEFAULT_SPORTS: Sport[] = ["NFL", "NBA", "MLB", "NHL", "UFC", "SOCCER"];
 
-export type OddsSource = "mock" | "the-odds-api" | "api-sports" | "merged";
+export type OddsSource = "the-odds-api" | "api-sports" | "merged" | "none";
 
 /**
- * Fetch odds from:
- * 1) The Odds API (multi-sport US books) when ODDS_API_KEY is set
- * 2) API-Sports football (global soccer) when API_SPORTS_KEY is set
- * Falls back to mock only if both empty / return nothing.
+ * Fetch live odds only — no mock fallback.
+ * Requires ODDS_API_KEY and/or API_SPORTS_KEY.
  */
 export async function fetchOddsEvents(sports?: Sport[]): Promise<{
   events: OddsEvent[];
@@ -37,15 +35,15 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
       events.push(...fromOddsApi);
       sources.push("the-odds-api");
     }
+  } else {
+    console.warn("[odds] ODDS_API_KEY is not set");
   }
 
-  // API-Sports adds broader soccer coverage (free tier: 100 req/day)
   const wantsSoccer = targetSports.includes("SOCCER");
   if (wantsSoccer && process.env.API_SPORTS_KEY) {
     try {
       const soccer = await fetchApiSportsSoccerEvents({ maxFixtures: 5 });
       if (soccer.length) {
-        // Prefer unique events; keep both if different leagues/ids
         const existingNames = new Set(
           events.filter((e) => e.sport === "SOCCER").map((e) => e.eventName.toLowerCase()),
         );
@@ -59,10 +57,12 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
     } catch (err) {
       console.warn("[odds] api-sports error", err);
     }
+  } else if (wantsSoccer && !process.env.API_SPORTS_KEY) {
+    console.warn("[odds] API_SPORTS_KEY is not set");
   }
 
   if (events.length === 0) {
-    return { events: getMockOddsEvents(), source: "mock", sources: ["mock"] };
+    return { events: [], source: "none", sources: [] };
   }
 
   const source: OddsSource =
@@ -115,6 +115,15 @@ async function fetchFromTheOddsApi(
       for (const game of data.slice(0, 4)) {
         const book = game.bookmakers[0];
         if (!book) continue;
+        const markets = book.markets
+          .filter((m) => m.key === "h2h" || m.key === "spreads" || m.key === "totals")
+          .map((m) => ({
+            key: m.key as "h2h" | "spreads" | "totals",
+            outcomes: m.outcomes,
+          }))
+          .filter((m) => m.outcomes.length > 0);
+        if (markets.length === 0) continue;
+
         events.push({
           id: game.id,
           sport,
@@ -124,12 +133,7 @@ async function fetchFromTheOddsApi(
           awayTeam: game.away_team,
           commenceTime: game.commence_time,
           bookmaker: book.key,
-          markets: book.markets
-            .filter((m) => m.key === "h2h" || m.key === "spreads" || m.key === "totals")
-            .map((m) => ({
-              key: m.key as "h2h" | "spreads" | "totals",
-              outcomes: m.outcomes,
-            })),
+          markets,
           context: {},
         });
       }

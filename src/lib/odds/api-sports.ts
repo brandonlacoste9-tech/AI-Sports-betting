@@ -1,4 +1,4 @@
-import type { OddsEvent } from "@/lib/odds/mock-data";
+import type { OddsEvent } from "@/lib/odds/types";
 
 /**
  * API-Sports (api-football) free-tier client.
@@ -152,6 +152,9 @@ export async function fetchApiSportsSoccerEvents(options?: {
       }
     }
 
+    // Skip fixtures without real book odds (no fabricated lines)
+    if (markets.length === 0 || !book) continue;
+
     events.push({
       id: `api-sports-soccer-${f.fixture.id}`,
       sport: "SOCCER",
@@ -160,20 +163,8 @@ export async function fetchApiSportsSoccerEvents(options?: {
       homeTeam: f.teams.home.name,
       awayTeam: f.teams.away.name,
       commenceTime: f.fixture.date,
-      bookmaker: book ? `api-sports:${book.name}` : "api-sports",
-      markets:
-        markets.length > 0
-          ? markets
-          : [
-              {
-                key: "h2h",
-                outcomes: [
-                  { name: f.teams.home.name, price: -110 },
-                  { name: "Draw", price: 240 },
-                  { name: f.teams.away.name, price: 200 },
-                ],
-              },
-            ],
+      bookmaker: `api-sports:${book.name}`,
+      markets,
       context: {
         notes: ["Source: API-Sports football"],
       },

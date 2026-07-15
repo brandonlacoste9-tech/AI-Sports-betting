@@ -1,6 +1,5 @@
-import { PrismaClient, type PickResult, type Sport } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { unitsFromOdds, utcDateOnly } from "../src/lib/utils";
 
 const prisma = new PrismaClient();
 
@@ -54,7 +53,6 @@ async function main() {
     create: { userId: demo.id, plan: "FREE", status: "INACTIVE" },
   });
 
-  // Founder / owner Pro promo (also accepted via env PROMO_CODE_PRO)
   await prisma.promoCode.upsert({
     where: { code: "BETEDGE-PRO-OWNER" },
     update: {
@@ -72,230 +70,23 @@ async function main() {
     },
   });
 
-  // Historical graded picks for performance tracker
-  const today = utcDateOnly();
-  await prisma.pick.deleteMany({ where: { modelVersion: "seed-v1" } });
+  // Remove legacy seed / mock picks (no fabricated data)
+  const deleted = await prisma.pick.deleteMany({
+    where: {
+      OR: [
+        { modelVersion: "seed-v1" },
+        { modelVersion: "mock-heuristic-v1" },
+        { bookmaker: "seed" },
+        { bookmaker: { startsWith: "mock_" } },
+        { reasoning: { contains: "simulated analysis for development" } },
+        { reasoning: { contains: "Demo slate pick" } },
+        { reasoning: { contains: "Seeded historical pick" } },
+      ],
+    },
+  });
+  console.log(`  Cleared ${deleted.count} legacy seed/mock picks`);
 
-  const historical: Array<{
-    daysAgo: number;
-    sport: Sport;
-    eventName: string;
-    market: string;
-    pickSide: string;
-    oddsAmerican: number;
-    confidence: number;
-    edgePercent: number;
-    result: PickResult;
-    isPremium?: boolean;
-  }> = [
-    {
-      daysAgo: 1,
-      sport: "NFL",
-      eventName: "Eagles vs Cowboys",
-      market: "spread",
-      pickSide: "Eagles -3.5",
-      oddsAmerican: -110,
-      confidence: 71,
-      edgePercent: 3.2,
-      result: "WIN",
-    },
-    {
-      daysAgo: 1,
-      sport: "NBA",
-      eventName: "Lakers vs Nuggets",
-      market: "total",
-      pickSide: "Under 224.5",
-      oddsAmerican: -105,
-      confidence: 66,
-      edgePercent: 2.1,
-      result: "LOSS",
-    },
-    {
-      daysAgo: 2,
-      sport: "MLB",
-      eventName: "Braves vs Mets",
-      market: "moneyline",
-      pickSide: "Braves ML",
-      oddsAmerican: -135,
-      confidence: 68,
-      edgePercent: 2.4,
-      result: "WIN",
-    },
-    {
-      daysAgo: 2,
-      sport: "NHL",
-      eventName: "Rangers vs Devils",
-      market: "moneyline",
-      pickSide: "Rangers ML",
-      oddsAmerican: -120,
-      confidence: 64,
-      edgePercent: 1.8,
-      result: "PUSH",
-    },
-    {
-      daysAgo: 3,
-      sport: "UFC",
-      eventName: "Main Card Welterweight",
-      market: "moneyline",
-      pickSide: "Fighter X",
-      oddsAmerican: +150,
-      confidence: 74,
-      edgePercent: 4.1,
-      result: "WIN",
-      isPremium: true,
-    },
-    {
-      daysAgo: 3,
-      sport: "SOCCER",
-      eventName: "Man City vs Chelsea",
-      market: "total",
-      pickSide: "Over 2.5",
-      oddsAmerican: -115,
-      confidence: 70,
-      edgePercent: 2.9,
-      result: "WIN",
-    },
-    {
-      daysAgo: 4,
-      sport: "NBA",
-      eventName: "Warriors vs Suns",
-      market: "spread",
-      pickSide: "Suns +4.5",
-      oddsAmerican: -110,
-      confidence: 67,
-      edgePercent: 2.2,
-      result: "LOSS",
-    },
-    {
-      daysAgo: 5,
-      sport: "NFL",
-      eventName: "Ravens vs Steelers",
-      market: "total",
-      pickSide: "Under 42.5",
-      oddsAmerican: -108,
-      confidence: 73,
-      edgePercent: 3.5,
-      result: "WIN",
-      isPremium: true,
-    },
-  ];
-
-  for (const h of historical) {
-    const d = new Date(today);
-    d.setUTCDate(d.getUTCDate() - h.daysAgo);
-    const profit =
-      h.result === "WIN" || h.result === "LOSS" || h.result === "PUSH" || h.result === "VOID"
-        ? unitsFromOdds(
-            h.oddsAmerican,
-            h.result === "VOID" ? "VOID" : h.result === "PUSH" ? "PUSH" : h.result,
-          )
-        : null;
-
-    await prisma.pick.create({
-      data: {
-        date: d,
-        sport: h.sport,
-        league: h.sport,
-        eventName: h.eventName,
-        market: h.market,
-        pickSide: h.pickSide,
-        oddsAmerican: h.oddsAmerican,
-        confidence: h.confidence,
-        edgePercent: h.edgePercent,
-        unitsSuggested: 1,
-        reasoning: `Seeded historical pick for demo performance tracking on ${h.eventName}.`,
-        keyFactors: ["seed data", "demo tracker"],
-        result: h.result,
-        profitUnits: profit,
-        isPremium: h.isPremium ?? false,
-        modelVersion: "seed-v1",
-        bookmaker: "seed",
-      },
-    });
-  }
-
-  // Today's open picks (demo)
-  const todayGames: Array<{
-    sport: Sport;
-    eventName: string;
-    market: string;
-    pickSide: string;
-    odds: number;
-    confidence: number;
-    edge: number;
-    premium?: boolean;
-  }> = [
-    {
-      sport: "NFL",
-      eventName: "Chiefs vs Bills",
-      market: "spread",
-      pickSide: "Chiefs -2.5",
-      odds: -110,
-      confidence: 72,
-      edge: 3.1,
-      premium: true,
-    },
-    {
-      sport: "NBA",
-      eventName: "Celtics vs Bucks",
-      market: "moneyline",
-      pickSide: "Celtics ML",
-      odds: -145,
-      confidence: 69,
-      edge: 2.4,
-    },
-    {
-      sport: "MLB",
-      eventName: "Dodgers vs Yankees",
-      market: "total",
-      pickSide: "Over 8.5",
-      odds: -110,
-      confidence: 65,
-      edge: 1.9,
-    },
-    {
-      sport: "UFC",
-      eventName: "Lightweight Main Event",
-      market: "moneyline",
-      pickSide: "Fighter A",
-      odds: -160,
-      confidence: 70,
-      edge: 2.8,
-    },
-    {
-      sport: "SOCCER",
-      eventName: "Arsenal vs Liverpool",
-      market: "total",
-      pickSide: "Over 2.5",
-      odds: -110,
-      confidence: 67,
-      edge: 2.2,
-    },
-  ];
-
-  for (const g of todayGames) {
-    await prisma.pick.create({
-      data: {
-        date: today,
-        sport: g.sport,
-        league: g.sport,
-        eventName: g.eventName,
-        market: g.market,
-        pickSide: g.pickSide,
-        oddsAmerican: g.odds,
-        confidence: g.confidence,
-        edgePercent: g.edge,
-        unitsSuggested: g.premium ? 1.5 : 1,
-        reasoning: `Demo slate pick: ${g.pickSide} on ${g.eventName}. AI synthesis of market, form, and situational edges. For entertainment only.`,
-        keyFactors: ["form", "market price", "situational edge"],
-        isPremium: g.premium ?? false,
-        modelVersion: "seed-v1",
-        bookmaker: "seed",
-        result: "PENDING",
-      },
-    });
-  }
-
+  // Performance snapshot from remaining real graded picks only
   const graded = await prisma.pick.findMany({
     where: { result: { in: ["WIN", "LOSS", "PUSH"] } },
   });
@@ -332,7 +123,7 @@ async function main() {
     },
   });
 
-  console.log("Seed complete");
+  console.log("Seed complete (users + promo only — no mock picks)");
   console.log(`  Admin: ${adminEmail} / ${adminPassword}`);
   console.log(`  Demo:  ${demoEmail} / ${demoPassword}`);
 }

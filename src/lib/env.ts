@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /**
  * Server-side env validation.
- * Missing optional keys enable mock/dev fallbacks.
+ * Odds + xAI keys are required for pick generation (no mock fallbacks).
  */
 const serverSchema = z.object({
   DATABASE_URL: z.string().min(1).optional(),

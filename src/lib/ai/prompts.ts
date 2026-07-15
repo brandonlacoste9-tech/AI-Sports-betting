@@ -1,4 +1,4 @@
-import type { OddsEvent } from "@/lib/odds/mock-data";
+import type { OddsEvent } from "@/lib/odds/types";
 
 export const PICK_SYSTEM_PROMPT = `You are BetEdge AI, an elite quantitative sports betting analyst.
 
@@ -47,7 +47,7 @@ export function buildUserPrompt(events: OddsEvent[], slateDate: string): string 
 
 Sports priority order: NFL, NBA, MLB, NHL, UFC, SOCCER.
 
-## Live / mock market data
+## Live market data
 ${JSON.stringify(events, null, 2)}
 
 Analyze carefully. Return JSON only matching the schema.`;

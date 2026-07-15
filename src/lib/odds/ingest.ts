@@ -20,6 +20,16 @@ function pointKey(point: number | null | undefined): string {
  */
 export async function ingestOddsSnapshots(sports?: Sport[]): Promise<IngestResult> {
   const { events, source, sources } = await fetchOddsEvents(sports);
+  if (events.length === 0) {
+    return {
+      source: source || "none",
+      sources: sources ?? [],
+      eventsUpserted: 0,
+      marketsWritten: 0,
+      snapshotsWritten: 0,
+    };
+  }
+
   let eventsUpserted = 0;
   let marketsWritten = 0;
   let snapshotsWritten = 0;

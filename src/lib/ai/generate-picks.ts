@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { fetchOddsEvents } from "@/lib/odds/client";
 import { PICK_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/ai/prompts";
 import { utcDateOnly } from "@/lib/utils";
-import type { OddsEvent } from "@/lib/odds/mock-data";
+import type { OddsEvent } from "@/lib/odds/types";
 
 const pickSchema = z.object({
   sport: z.enum(["NFL", "NBA", "MLB", "NHL", "UFC", "SOCCER"]),
@@ -30,59 +30,14 @@ const responseSchema = z.object({
 
 export type GeneratedPick = z.infer<typeof pickSchema>;
 
-function mockAiPicks(events: OddsEvent[]): GeneratedPick[] {
-  // Heuristic mock “AI” so local dev works without XAI_API_KEY
-  return events.slice(0, 6).map((event, i) => {
-    const market = event.markets[0];
-    const outcome = market?.outcomes[0];
-    const point =
-      outcome?.point !== undefined ? ` ${outcome.point > 0 ? "+" : ""}${outcome.point}` : "";
-    const pickSide = outcome ? `${outcome.name}${point}` : event.homeTeam;
-    const oddsAmerican = outcome?.price ?? -110;
-    const confidence = 62 + (i % 5) * 4;
-    const edgePercent = 1.5 + (i % 4) * 0.7;
-    const isPremium = confidence >= 72 && edgePercent >= 3;
-
-    return {
-      sport: event.sport,
-      league: event.league,
-      eventName: event.eventName,
-      eventStartsAt: event.commenceTime,
-      market:
-        market?.key === "h2h" ? "moneyline" : market?.key === "spreads" ? "spread" : "total",
-      pickSide,
-      oddsAmerican,
-      bookmaker: event.bookmaker,
-      confidence,
-      edgePercent: Number(edgePercent.toFixed(2)),
-      unitsSuggested: isPremium ? 1.5 : 1,
-      reasoning: [
-        `Model lean on ${pickSide} after weighing market price (${oddsAmerican}) against situational factors.`,
-        event.context.lineMove ? `Line movement: ${event.context.lineMove}.` : "",
-        event.context.injuries?.length
-          ? `Injury context: ${event.context.injuries.join("; ")}.`
-          : "",
-        event.context.weather ? `Weather: ${event.context.weather}.` : "",
-        event.context.notes?.length ? `Notes: ${event.context.notes.join(" ")}` : "",
-        "This is a simulated analysis for development — not a guarantee of profit.",
-      ]
-        .filter(Boolean)
-        .join(" "),
-      keyFactors: [
-        ...(event.context.injuries ?? []),
-        ...(event.context.weather ? [event.context.weather] : []),
-        ...(event.context.lineMove ? [event.context.lineMove] : []),
-        ...(event.context.notes ?? []),
-      ].slice(0, 6),
-      isPremium,
-    };
-  });
-}
-
 async function callGrok(events: OddsEvent[], slateDate: string): Promise<GeneratedPick[]> {
   const apiKey = process.env.XAI_API_KEY;
   if (!apiKey) {
-    return mockAiPicks(events);
+    throw new Error("XAI_API_KEY is required to generate picks (mock AI is disabled)");
+  }
+
+  if (events.length === 0) {
+    throw new Error("No live odds events available — check ODDS_API_KEY / API_SPORTS_KEY");
   }
 
   const model = process.env.XAI_MODEL ?? "grok-4.3";
@@ -106,8 +61,7 @@ async function callGrok(events: OddsEvent[], slateDate: string): Promise<Generat
   if (!res.ok) {
     const text = await res.text();
     console.error("[xai] error", res.status, text);
-    // Graceful fallback
-    return mockAiPicks(events);
+    throw new Error(`xAI pick generation failed (${res.status}): ${text.slice(0, 200)}`);
   }
 
   const data = (await res.json()) as {
@@ -115,14 +69,20 @@ async function callGrok(events: OddsEvent[], slateDate: string): Promise<Generat
   };
   const content = data.choices?.[0]?.message?.content;
   if (!content) {
-    return mockAiPicks(events);
+    throw new Error("xAI returned an empty response");
   }
 
-  const parsedJson: unknown = JSON.parse(content);
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(content);
+  } catch {
+    throw new Error("xAI response was not valid JSON");
+  }
+
   const validated = responseSchema.safeParse(parsedJson);
   if (!validated.success) {
     console.error("[xai] schema validation failed", validated.error.flatten());
-    return mockAiPicks(events);
+    throw new Error("xAI returned picks that failed schema validation");
   }
 
   return validated.data.picks;
@@ -137,8 +97,9 @@ export type GeneratePicksResult = {
 };
 
 /**
- * Fetch market data → AI (or mock) → persist picks for today's slate.
+ * Fetch live market data → Grok → persist picks for today's slate.
  * Replaces existing PENDING picks for the same UTC date when regenerate=true.
+ * No mock odds or mock AI fallbacks.
  */
 export async function generateAndStorePicks(options?: {
   regenerate?: boolean;
@@ -148,10 +109,14 @@ export async function generateAndStorePicks(options?: {
   const slateIso = slate.toISOString().slice(0, 10);
 
   const { events, source, sources } = await fetchOddsEvents();
+  if (events.length === 0) {
+    throw new Error(
+      "No live odds returned. Ensure ODDS_API_KEY and/or API_SPORTS_KEY are set and have quota.",
+    );
+  }
+
   const generated = await callGrok(events, slateIso);
-  const modelVersion = process.env.XAI_API_KEY
-    ? (process.env.XAI_MODEL ?? "grok-4.3")
-    : "mock-heuristic-v1";
+  const modelVersion = process.env.XAI_MODEL ?? "grok-4.3";
 
   if (regenerate) {
     await prisma.pick.deleteMany({
@@ -189,7 +154,6 @@ export async function generateAndStorePicks(options?: {
     ),
   );
 
-  // Refresh simple all-time snapshot from graded picks
   await refreshPerformanceSnapshot();
 
   return {

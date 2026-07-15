@@ -119,7 +119,7 @@ export function AdminClient({
         <CardHeader>
           <CardTitle>AI pick engine</CardTitle>
           <CardDescription>
-            Runs odds fetch (API or mock) → Grok structured JSON → database. Rate limited.
+            Live odds APIs → Grok structured JSON → database. No mock data. Rate limited.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-3">
