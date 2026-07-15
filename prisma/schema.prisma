@@ -63,6 +63,7 @@ model User {
   sessions     Session[]
   subscription Subscription?
   pickViews    PickView[]
+  apiKeys      ApiKey[]
 
   @@index([email])
   @@index([plan])
@@ -188,4 +189,98 @@ model PerformanceSnapshot {
 
   @@unique([period, sportKey])
   @@index([period])
+}
+
+// ─── Odds platform (internal + public board + developer API) ───
+
+model SportsEvent {
+  id            String    @id @default(cuid())
+  externalId    String    @unique
+  sport         Sport
+  league        String?
+  homeTeam      String
+  awayTeam      String
+  eventName     String
+  commenceTime  DateTime?
+  isLive        Boolean   @default(false)
+  lastSeenAt    DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  markets Market[]
+
+  @@index([sport, commenceTime])
+  @@index([lastSeenAt])
+}
+
+model Market {
+  id           String   @id @default(cuid())
+  eventId      String
+  marketKey    String // h2h | spreads | totals
+  selection    String // team name, Over, Under, etc.
+  /// Point as string key so null spreads/totals stay unique ("")
+  pointKey     String   @default("")
+  point        Float?
+  bookmaker    String
+  oddsAmerican Int
+  capturedAt   DateTime @default(now())
+
+  event     SportsEvent    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  snapshots OddsSnapshot[]
+
+  @@unique([eventId, marketKey, selection, pointKey, bookmaker])
+  @@index([eventId, marketKey])
+  @@index([capturedAt])
+}
+
+/// Historical price points for line-move analysis
+model OddsSnapshot {
+  id           String   @id @default(cuid())
+  marketId     String
+  oddsAmerican Int
+  point        Float?
+  capturedAt   DateTime @default(now())
+
+  market Market @relation(fields: [marketId], references: [id], onDelete: Cascade)
+
+  @@index([marketId, capturedAt])
+  @@index([capturedAt])
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String    @default("Default")
+  /// Public prefix for display e.g. be_live_xxxx
+  keyPrefix   String
+  /// SHA-256 hash of full key (never store raw key)
+  keyHash     String    @unique
+  /// FREE tier keys limited; PRO gets higher quota
+  planTier    Plan      @default(FREE)
+  requestsDay Int       @default(0)
+  requestsAll Int       @default(0)
+  lastUsedAt  DateTime?
+  lastResetAt DateTime  @default(now())
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usage ApiKeyUsage[]
+
+  @@index([userId])
+  @@index([keyPrefix])
+}
+
+model ApiKeyUsage {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  path      String
+  status    Int
+  createdAt DateTime @default(now())
+
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId, createdAt])
+  @@index([createdAt])
 }

@@ -43,11 +43,11 @@ export function AdminClient({
   recentPicks: PickRow[];
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<"picks" | "odds" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   async function generatePicks() {
-    setLoading(true);
+    setLoading("picks");
     setMessage(null);
     try {
       const res = await fetch("/api/admin/generate-picks", {
@@ -71,7 +71,33 @@ export function AdminClient({
       );
       router.refresh();
     } finally {
-      setLoading(false);
+      setLoading(null);
+    }
+  }
+
+  async function ingestOdds() {
+    setLoading("odds");
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/ingest-odds", { method: "POST" });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        source?: string;
+        eventsUpserted?: number;
+        marketsWritten?: number;
+        snapshotsWritten?: number;
+        error?: string;
+      };
+      if (!res.ok) {
+        setMessage(data.error ?? "Ingest failed");
+        return;
+      }
+      setMessage(
+        `Odds ingest (${data.source}): ${data.eventsUpserted} events, ${data.marketsWritten} market updates, ${data.snapshotsWritten} snapshots`,
+      );
+      router.refresh();
+    } finally {
+      setLoading(null);
     }
   }
 
@@ -97,8 +123,11 @@ export function AdminClient({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-3">
-          <Button onClick={generatePicks} disabled={loading}>
-            {loading ? "Generating…" : "Generate picks"}
+          <Button onClick={generatePicks} disabled={loading !== null}>
+            {loading === "picks" ? "Generating…" : "Generate picks"}
+          </Button>
+          <Button variant="secondary" onClick={ingestOdds} disabled={loading !== null}>
+            {loading === "odds" ? "Ingesting…" : "Ingest odds snapshots"}
           </Button>
           {message && <p className="text-sm text-muted">{message}</p>}
         </CardContent>

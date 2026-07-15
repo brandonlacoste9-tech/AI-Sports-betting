@@ -19,8 +19,11 @@ export async function Header() {
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm text-muted md:flex">
-          <Link href="/#features" className="hover:text-foreground">
-            Features
+          <Link href="/odds" className="hover:text-foreground">
+            Odds
+          </Link>
+          <Link href="/docs/api" className="hover:text-foreground">
+            API
           </Link>
           <Link href="/#pricing" className="hover:text-foreground">
             Pricing
@@ -29,6 +32,9 @@ export async function Header() {
             <>
               <Link href="/dashboard" className="hover:text-foreground">
                 Dashboard
+              </Link>
+              <Link href="/line-moves" className="hover:text-foreground">
+                Line moves
               </Link>
               <Link href="/settings" className="hover:text-foreground">
                 Settings

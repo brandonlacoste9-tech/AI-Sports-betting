@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/generate-picks",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/ingest-odds",
+      "schedule": "0 */4 * * *"
     }
   ]
 }

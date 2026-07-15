@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ApiKeysPanel } from "@/components/settings/api-keys-panel";
 import type { Plan, SubscriptionStatus } from "@prisma/client";
 
 export function SettingsClient({
@@ -128,6 +129,8 @@ export function SettingsClient({
           </p>
         </CardContent>
       </Card>
+
+      <ApiKeysPanel />
 
       <Card>
         <CardHeader>

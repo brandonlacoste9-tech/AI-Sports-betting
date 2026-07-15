@@ -44,6 +44,11 @@ const features = [
     title: "Responsible by design",
     body: "Clear disclaimers, no guaranteed profits, entertainment-first product framing.",
   },
+  {
+    icon: LineChart,
+    title: "Odds board + API",
+    body: "Public odds board, line-move history for paid plans, and a developer API with keys.",
+  },
 ];
 
 const tiers = [
@@ -63,8 +68,8 @@ const tiers = [
     features: [
       "Unlimited daily picks",
       "Full history & analytics",
-      "All sports coverage",
-      "Email-ready slate",
+      "Line moves board",
+      "Odds API (2k req/day)",
     ],
     cta: "Go Basic",
     href: "/register?plan=basic",
@@ -77,7 +82,7 @@ const tiers = [
     features: [
       "Everything in Basic",
       "Premium high-confidence picks",
-      "Priority slate access",
+      "Odds API (20k req/day)",
       "Advanced ROI tracking",
     ],
     cta: "Go Pro",

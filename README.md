@@ -63,9 +63,23 @@ See `.env.example` for all variables.
 
 | Plan | Price | Access |
 |------|-------|--------|
-| Free | $0 | 1 pick/day, limited history |
-| Basic | $19/mo | Unlimited picks + analytics |
-| Pro | $49/mo | + premium high-edge picks |
+| Free | $0 | 1 pick/day, limited history, Odds API 100/day |
+| Basic | $19/mo | Unlimited picks, line moves, Odds API 2k/day |
+| Pro | $49/mo | Premium picks, Odds API 20k/day |
+
+## Odds platform (Phase 2 mix)
+
+| Surface | Path | Notes |
+|---------|------|--------|
+| Public board | `/odds` | Free, SEO-friendly |
+| Line moves | `/line-moves` | Basic/Pro |
+| API docs | `/docs/api` | Developer guide |
+| Odds API | `GET /api/v1/odds` | Bearer `be_live_…` |
+| Line moves API | `GET /api/v1/line-moves` | Basic/Pro |
+| Ingest cron | `/api/cron/ingest-odds` | Every 4h (configure host) |
+| Admin ingest | Admin → **Ingest odds snapshots** | Manual refresh |
+
+API keys are created under **Settings** (hashed at rest; raw key shown once).
 
 ## Deploy (Vercel + Neon)
 

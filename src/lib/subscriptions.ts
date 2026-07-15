@@ -8,6 +8,9 @@ export const PLAN_LIMITS = {
     historyDays: 7,
     fullAnalytics: false,
     premiumPicks: false,
+    lineMoves: false,
+    apiRequestsPerDay: 100,
+    maxApiKeys: 1,
   },
   BASIC: {
     label: "Basic",
@@ -16,6 +19,9 @@ export const PLAN_LIMITS = {
     historyDays: 365,
     fullAnalytics: true,
     premiumPicks: false,
+    lineMoves: true,
+    apiRequestsPerDay: 2_000,
+    maxApiKeys: 2,
   },
   PRO: {
     label: "Pro",
@@ -24,6 +30,9 @@ export const PLAN_LIMITS = {
     historyDays: 3650,
     fullAnalytics: true,
     premiumPicks: true,
+    lineMoves: true,
+    apiRequestsPerDay: 20_000,
+    maxApiKeys: 5,
   },
 } as const satisfies Record<
   Plan,
@@ -34,6 +43,9 @@ export const PLAN_LIMITS = {
     historyDays: number;
     fullAnalytics: boolean;
     premiumPicks: boolean;
+    lineMoves: boolean;
+    apiRequestsPerDay: number;
+    maxApiKeys: number;
   }
 >;
 

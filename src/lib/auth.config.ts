@@ -19,7 +19,8 @@ export const authConfig = {
       const isApp =
         pathname.startsWith("/dashboard") ||
         pathname.startsWith("/settings") ||
-        pathname.startsWith("/admin");
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/line-moves");
 
       if (isApp && !isLoggedIn) return false;
 
