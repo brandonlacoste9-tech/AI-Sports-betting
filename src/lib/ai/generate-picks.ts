@@ -85,7 +85,7 @@ async function callGrok(events: OddsEvent[], slateDate: string): Promise<Generat
     return mockAiPicks(events);
   }
 
-  const model = process.env.XAI_MODEL ?? "grok-2-latest";
+  const model = process.env.XAI_MODEL ?? "grok-3";
   const res = await fetch("https://api.x.ai/v1/chat/completions", {
     method: "POST",
     headers: {

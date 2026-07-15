@@ -10,7 +10,7 @@ const serverSchema = z.object({
   AUTH_GOOGLE_ID: z.string().optional(),
   AUTH_GOOGLE_SECRET: z.string().optional(),
   XAI_API_KEY: z.string().optional(),
-  XAI_MODEL: z.string().default("grok-2-latest"),
+  XAI_MODEL: z.string().default("grok-3"),
   ODDS_API_KEY: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
