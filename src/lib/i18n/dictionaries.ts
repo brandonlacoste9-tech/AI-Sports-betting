@@ -1,4 +1,4 @@
-﻿export type Locale = "en" | "fr";
+export type Locale = "en" | "fr";
 
 export const LOCALES: Locale[] = ["en", "fr"];
 export const DEFAULT_LOCALE: Locale = "en";
@@ -133,7 +133,7 @@ const en: Dictionary = {
     signUp: "Sign up",
   },
   common: {
-    loading: "Loadingâ€¦",
+    loading: "Loading…",
     email: "Email",
     password: "Password",
     name: "Name",
@@ -152,7 +152,7 @@ const en: Dictionary = {
     heroTitleBefore: "Daily sports picks with",
     heroTitleAccent: "real edge analysis",
     heroBody:
-      "BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks for NFL, NBA, MLB, NHL, UFC, and Soccer â€” so you stop doomscrolling research at midnight.",
+      "BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks for NFL, NBA, MLB, NHL, UFC, and Soccer — so you stop doomscrolling research at midnight.",
     ctaFree: "Get today's free pick",
     ctaLogin: "Log in",
     featuresTitle: "Built for bettors who want process",
@@ -177,7 +177,7 @@ const en: Dictionary = {
       },
       {
         title: "Performance tracker",
-        body: "Transparent win rate, units, and ROI â€” no cherry-picked screenshots.",
+        body: "Transparent win rate, units, and ROI — no cherry-picked screenshots.",
       },
       {
         title: "Bankroll tools",
@@ -238,8 +238,8 @@ const en: Dictionary = {
     registerTitle: "Create your account",
     registerSubtitle: "Free tier includes 1 AI pick every day",
     passwordMin: "Password (min 8)",
-    signingIn: "Signing inâ€¦",
-    creating: "Creatingâ€¦",
+    signingIn: "Signing in…",
+    creating: "Creating…",
     createAccount: "Create account",
     noAccount: "No account?",
     hasAccount: "Already have an account?",
@@ -249,7 +249,7 @@ const en: Dictionary = {
   dashboard: {
     title: "Dashboard",
     hey: "Hey",
-    subtitle: "Today's AI board Â· NFL â†’ Soccer priority",
+    subtitle: "Today's AI board · NFL → Soccer priority",
     freeUnlocks: "free unlocks left",
     planSuffix: "plan",
     todaysPicks: "Today's picks",
@@ -260,7 +260,7 @@ const en: Dictionary = {
     performanceLimited: "Free plan shows summary only. Upgrade for full ROI analytics.",
     bankroll: "Bankroll calculator",
     bankrollDesc:
-      "Unit sizing + fractional Kelly helper. Educational only â€” not financial advice.",
+      "Unit sizing + fractional Kelly helper. Educational only — not financial advice.",
   },
   settings: {
     title: "Settings",
@@ -271,7 +271,7 @@ const en: Dictionary = {
     subscriptionDesc: "Upgrade for unlimited picks and full analytics",
     promo: "Have a promo code?",
     applyCode: "Apply code",
-    applying: "Applyingâ€¦",
+    applying: "Applying…",
     enterPromo: "Enter promo code",
     signOut: "Sign out",
     session: "Session",
@@ -296,9 +296,9 @@ const en: Dictionary = {
     subtitle: "Largest American-odds swings from stored snapshots (last 72h)",
     publicBoard: "Public board",
     steam: "Steam board",
-    empty: "No moves yet â€” run odds ingest twice (admin or cron) to create history.",
+    empty: "No moves yet — run odds ingest twice (admin or cron) to create history.",
   },
-} as const;
+}
 
 const fr: Dictionary = {
   nav: {
@@ -307,14 +307,14 @@ const fr: Dictionary = {
     pricing: "Tarifs",
     dashboard: "Tableau de bord",
     lineMoves: "Mouvements de cotes",
-    settings: "ParamÃ¨tres",
+    settings: "Paramètres",
     admin: "Admin",
     login: "Connexion",
     startFree: "Essai gratuit",
     signUp: "S'inscrire",
   },
   common: {
-    loading: "Chargementâ€¦",
+    loading: "Chargement…",
     email: "Courriel",
     password: "Mot de passe",
     name: "Nom",
@@ -324,45 +324,45 @@ const fr: Dictionary = {
     language: "Langue",
   },
   disclaimer:
-    "Ã€ des fins de divertissement seulement. Les paris comportent des risques. Les rÃ©sultats passÃ©s ne garantissent pas les rÃ©sultats futurs. Vous devez avoir 18 ans et + / 21 ans et + (selon la juridiction) pour utiliser des services de paris sportifs. Pariez de faÃ§on responsable.",
+    "À des fins de divertissement seulement. Les paris comportent des risques. Les rÃ©sultats passÃ©s ne garantissent pas les rÃ©sultats futurs. Vous devez avoir 18 ans et + / 21 ans et + (selon la juridiction) pour utiliser des services de paris sportifs. Pariez de faÃ§on responsable.",
   footer: {
     notSportsbook: "Pas un site de paris. Conseils et analyses seulement.",
   },
   landing: {
-    badge: "Intelligence de paris propulsÃ©e par l'IA",
+    badge: "Intelligence de paris propulsée par l'IA",
     heroTitleBefore: "Choix sportifs quotidiens avec",
     heroTitleAccent: "vraie analyse d'avantage",
     heroBody:
-      "BetEdge AI transforme cotes, blessures, mÃ©tÃ©o et mouvements de lignes en choix clairs et classÃ©s pour la NFL, NBA, MLB, LNH, UFC et le soccer â€” pour arrÃªter de scroller la recherche Ã  minuit.",
+      "BetEdge AI transforme cotes, blessures, météo et mouvements de lignes en choix clairs et classés pour la NFL, NBA, MLB, LNH, UFC et le soccer — pour arrêter de scroller la recherche à minuit.",
     ctaFree: "Obtenir le choix gratuit du jour",
     ctaLogin: "Connexion",
-    featuresTitle: "ConÃ§u pour les parieurs qui veulent une mÃ©thode",
+    featuresTitle: "Conçu pour les parieurs qui veulent une méthode",
     featuresSubtitle:
       "Pas un site de paris. Un copilote de recherche qui livre un tableau actionnable.",
     pricingTitle: "Tarification freemium simple",
-    pricingSubtitle: "Annulez en tout temps. Facturation sÃ©curisÃ©e via Stripe.",
+    pricingSubtitle: "Annulez en tout temps. Facturation sécurisée via Stripe.",
     popular: "Populaire",
     perMonth: "/mois",
     ctaSectionTitle: "Livrez votre avantage avant le coup d'envoi",
     ctaSectionBody:
-      "Rejoignez le freemium, dÃ©bloquez un choix IA aujourd'hui, passez Ã  un forfait payant pour le tableau complet.",
-    ctaCreate: "CrÃ©er un compte gratuit",
+      "Rejoignez le freemium, débloquez un choix IA aujourd'hui, passez à un forfait payant pour le tableau complet.",
+    ctaCreate: "Créer un compte gratuit",
     features: [
       {
         title: "Moteur de choix IA",
-        body: "Grok analyse marchÃ©s, blessures, mÃ©tÃ©o et mouvements pour des choix structurÃ©s chaque jour.",
+        body: "Grok analyse marchés, blessures, météo et mouvements pour des choix structurés chaque jour.",
       },
       {
         title: "Avantage + confiance",
-        body: "Chaque choix inclut un avantage estimÃ©, un score de confiance et un guide d'unitÃ©s.",
+        body: "Chaque choix inclut un avantage estimé, un score de confiance et un guide d'unités.",
       },
       {
         title: "Suivi de performance",
-        body: "Taux de rÃ©ussite, unitÃ©s et ROI transparents â€” pas de captures sÃ©lectionnÃ©es.",
+        body: "Taux de réussite, unités et ROI transparents — pas de captures sélectionnées.",
       },
       {
         title: "Outils de bankroll",
-        body: "Kelly fractionnaire et taille d'unitÃ© pour gÃ©rer vos mises comme un pro.",
+        body: "Kelly fractionnaire et taille d'unité pour gérer vos mises comme un pro.",
       },
       {
         title: "Couverture multi-sports",
@@ -374,17 +374,17 @@ const fr: Dictionary = {
       },
       {
         title: "Tableau des cotes + API",
-        body: "Tableau public, historique des mouvements pour les forfaits payants, et API dÃ©veloppeur.",
+        body: "Tableau public, historique des mouvements pour les forfaits payants, et API développeur.",
       },
     ],
     tiers: [
       {
         name: "Gratuit",
-        blurb: "GoÃ»tez l'avantage",
+        blurb: "Goûtez l'avantage",
         features: [
           "1 choix par jour",
-          "Historique limitÃ© 7 jours",
-          "RÃ©sumÃ© du taux de rÃ©ussite",
+          "Historique limité 7 jours",
+          "Résumé du taux de réussite",
           "Calculateur de bankroll",
         ],
         cta: "Commencer gratuitement",
@@ -393,79 +393,79 @@ const fr: Dictionary = {
         name: "Basic",
         blurb: "Tableau quotidien complet",
         features: [
-          "Choix quotidiens illimitÃ©s",
+          "Choix quotidiens illimités",
           "Historique et analyses complets",
           "Tableau des mouvements",
           "API cotes (2k req/jour)",
         ],
-        cta: "Passer Ã  Basic",
+        cta: "Passer à Basic",
       },
       {
         name: "Pro",
-        blurb: "DÃ©blocages haut avantage",
+        blurb: "Déblocages haut avantage",
         features: [
           "Tout de Basic",
           "Choix premium haute confiance",
           "API cotes (20k req/jour)",
-          "Suivi ROI avancÃ©",
+          "Suivi ROI avancé",
         ],
-        cta: "Passer Ã  Pro",
+        cta: "Passer à Pro",
       },
     ],
   },
   auth: {
     loginTitle: "Bon retour",
     loginSubtitle: "Connectez-vous pour voir les choix IA du jour",
-    registerTitle: "CrÃ©er votre compte",
+    registerTitle: "Créer votre compte",
     registerSubtitle: "Le forfait gratuit inclut 1 choix IA par jour",
     passwordMin: "Mot de passe (min. 8)",
-    signingIn: "Connexionâ€¦",
-    creating: "CrÃ©ationâ€¦",
-    createAccount: "CrÃ©er le compte",
+    signingIn: "Connexion…",
+    creating: "Création…",
+    createAccount: "Créer le compte",
     noAccount: "Pas de compte?",
-    hasAccount: "DÃ©jÃ  un compte?",
+    hasAccount: "Déjà un compte?",
     invalidCreds: "Courriel ou mot de passe invalide",
-    regFailed: "Ã‰chec de l'inscription",
+    regFailed: "Échec de l'inscription",
   },
   dashboard: {
     title: "Tableau de bord",
     hey: "Salut",
-    subtitle: "Tableau IA du jour Â· NFL â†’ Soccer",
-    freeUnlocks: "dÃ©blocages gratuits restants",
+    subtitle: "Tableau IA du jour · NFL → Soccer",
+    freeUnlocks: "déblocages gratuits restants",
     planSuffix: "forfait",
     todaysPicks: "Choix du jour",
-    recentHistory: "Historique rÃ©cent",
-    noHistory: "Aucun historique dans la fenÃªtre de votre forfait.",
+    recentHistory: "Historique récent",
+    noHistory: "Aucun historique dans la fenêtre de votre forfait.",
     performance: "Suivi de performance",
-    performanceFull: "Choix notÃ©s de tous les temps (dÃ©mo + live).",
+    performanceFull: "Choix notés de tous les temps (démo + live).",
     performanceLimited:
-      "Le forfait gratuit affiche un rÃ©sumÃ© seulement. Passez Ã  un forfait payant pour le ROI complet.",
+      "Le forfait gratuit affiche un résumé seulement. Passez à un forfait payant pour le ROI complet.",
     bankroll: "Calculateur de bankroll",
     bankrollDesc:
-      "Taille d'unitÃ© + Kelly fractionnaire. Ã€ titre Ã©ducatif seulement â€” pas un conseil financier.",
+      "Taille d'unité + Kelly fractionnaire. À titre éducatif seulement — pas un conseil financier.",
   },
   settings: {
-    title: "ParamÃ¨tres",
+    title: "Paramètres",
     subtitle: "Profil, forfait et facturation",
     profile: "Profil",
-    profileDesc: "DÃ©tails du compte",
+    profileDesc: "Détails du compte",
     subscription: "Abonnement",
-    subscriptionDesc: "Passez Ã  un forfait payant pour des choix illimitÃ©s et analyses complÃ¨tes",
+    subscriptionDesc: "Passez à un forfait payant pour des choix illimités et analyses complètes",
     promo: "Vous avez un code promo?",
     applyCode: "Appliquer le code",
-    applying: "Applicationâ€¦",
+    applying: "Application…",
     enterPromo: "Entrez le code promo",
-    signOut: "DÃ©connexion",
+    signOut: "Déconnexion",
     session: "Session",
     billingStatus: "Statut de facturation",
-    manageBilling: "GÃ©rer la facturation",
-    apiKeys: "ClÃ©s API dÃ©veloppeur",
+    manageBilling: "Gérer la facturation",
+    apiKeys: "Clés API développeur",
   },
   odds: {
     title: "Tableau public des cotes",
     badge: "BetEdge Cotes",
     subtitle:
-      "InstantanÃ© gratuit des marchÃ©s stockÃ©s dans notre couche de cotes. Pour le steam en direct et l'historique, passez Ã  Basic/Pro ou utilisez l'API.",
+      "Instantané gratuit des marchés stockés dans notre couche de cotes. Pour le steam en direct et l'historique, passez à Basic/Pro ou utilisez l'API.",
     apiDocs: "Docs API",
     lineMoves: "Mouvements",
     empty: "Aucune cote encore. Un ingest admin/cron remplira ce tableau.",
@@ -474,11 +474,11 @@ const fr: Dictionary = {
     title: "Mouvements de cotes",
     locked:
       "Suivez le steam et les changements de prix. Disponible avec Basic et Pro.",
-    upgrade: "AmÃ©liorer le forfait",
-    subtitle: "Plus grands Ã©carts de cotes amÃ©ricaines (72 h)",
+    upgrade: "Améliorer le forfait",
+    subtitle: "Plus grands écarts de cotes américaines (72 h)",
     publicBoard: "Tableau public",
     steam: "Tableau steam",
-    empty: "Aucun mouvement â€” lancez l'ingest des cotes deux fois pour crÃ©er l'historique.",
+    empty: "Aucun mouvement — lancez l'ingest des cotes deux fois pour créer l'historique.",
   },
 };
 
