@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -94,34 +95,52 @@ const tiers = [
 export default function LandingPage() {
   return (
     <div className="bg-grid">
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-4 pb-16 pt-16 md:pb-24 md:pt-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <Badge variant="accent" className="mb-4">
-            <Sparkles className="mr-1 h-3 w-3" /> AI-powered betting intelligence
-          </Badge>
-          <h1 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-            Daily sports picks with{" "}
-            <span className="text-accent">real edge analysis</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted">
-            BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks
-            for NFL, NBA, MLB, NHL, UFC, and Soccer — so you stop doomscrolling research at midnight.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/register">
-              <Button size="lg" className="glow-accent">
-                Get today&apos;s free pick
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button size="lg" variant="secondary">
-                Log in
-              </Button>
-            </Link>
-          </div>
-          <div className="mt-6">
-            <Disclaimer className="mx-auto max-w-xl text-center" />
+      {/* Hero — multi-sport collage faded behind copy */}
+      <section className="relative overflow-hidden border-b border-card-border/40">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero-sports.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center opacity-40"
+          />
+          {/* Fade layers so headline stays readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/85 to-background" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--background)_72%)]" />
+          <div className="absolute inset-0 bg-background/30" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 md:pb-28 md:pt-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="accent" className="mb-4 shadow-lg shadow-black/40">
+              <Sparkles className="mr-1 h-3 w-3" /> AI-powered betting intelligence
+            </Badge>
+            <h1 className="text-balance text-4xl font-bold tracking-tight drop-shadow-[0_2px_24px_rgba(0,0,0,0.85)] md:text-6xl">
+              Daily sports picks with{" "}
+              <span className="text-accent">real edge analysis</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted drop-shadow-[0_1px_12px_rgba(0,0,0,0.9)]">
+              BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks
+              for NFL, NBA, MLB, NHL, UFC, and Soccer — so you stop doomscrolling research at
+              midnight.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Link href="/register">
+                <Button size="lg" className="glow-accent">
+                  Get today&apos;s free pick
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button size="lg" variant="secondary">
+                  Log in
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-6 rounded-xl border border-card-border/50 bg-background/50 px-4 py-3 backdrop-blur-sm">
+              <Disclaimer className="mx-auto max-w-xl text-center" />
+            </div>
           </div>
         </div>
       </section>
