@@ -129,7 +129,8 @@ async function callGrok(events: OddsEvent[], slateDate: string): Promise<Generat
 }
 
 export type GeneratePicksResult = {
-  source: "mock" | "the-odds-api";
+  source: string;
+  sources?: string[];
   model: string;
   created: number;
   picks: Array<{ id: string; eventName: string; sport: Sport }>;
@@ -146,7 +147,7 @@ export async function generateAndStorePicks(options?: {
   const slate = utcDateOnly();
   const slateIso = slate.toISOString().slice(0, 10);
 
-  const { events, source } = await fetchOddsEvents();
+  const { events, source, sources } = await fetchOddsEvents();
   const generated = await callGrok(events, slateIso);
   const modelVersion = process.env.XAI_API_KEY
     ? (process.env.XAI_MODEL ?? "grok-4.3")
@@ -193,6 +194,7 @@ export async function generateAndStorePicks(options?: {
 
   return {
     source,
+    sources,
     model: modelVersion,
     created: created.length,
     picks: created,

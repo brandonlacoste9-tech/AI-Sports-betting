@@ -3,7 +3,8 @@ import { fetchOddsEvents } from "@/lib/odds/client";
 import type { Sport } from "@prisma/client";
 
 export type IngestResult = {
-  source: "mock" | "the-odds-api";
+  source: string;
+  sources?: string[];
   eventsUpserted: number;
   marketsWritten: number;
   snapshotsWritten: number;
@@ -18,7 +19,7 @@ function pointKey(point: number | null | undefined): string {
  * Snapshot current odds into SportsEvent / Market / OddsSnapshot.
  */
 export async function ingestOddsSnapshots(sports?: Sport[]): Promise<IngestResult> {
-  const { events, source } = await fetchOddsEvents(sports);
+  const { events, source, sources } = await fetchOddsEvents(sports);
   let eventsUpserted = 0;
   let marketsWritten = 0;
   let snapshotsWritten = 0;
@@ -123,7 +124,7 @@ export async function ingestOddsSnapshots(sports?: Sport[]): Promise<IngestResul
     }
   }
 
-  return { source, eventsUpserted, marketsWritten, snapshotsWritten };
+  return { source, sources, eventsUpserted, marketsWritten, snapshotsWritten };
 }
 
 export type LineMove = {

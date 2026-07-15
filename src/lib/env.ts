@@ -12,6 +12,7 @@ const serverSchema = z.object({
   XAI_API_KEY: z.string().optional(),
   XAI_MODEL: z.string().default("grok-4.3"),
   ODDS_API_KEY: z.string().optional(),
+  API_SPORTS_KEY: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_PRICE_BASIC: z.string().optional(),
