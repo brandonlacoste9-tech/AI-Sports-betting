@@ -54,6 +54,24 @@ async function main() {
     create: { userId: demo.id, plan: "FREE", status: "INACTIVE" },
   });
 
+  // Founder / owner Pro promo (also accepted via env PROMO_CODE_PRO)
+  await prisma.promoCode.upsert({
+    where: { code: "BETEDGE-PRO-OWNER" },
+    update: {
+      plan: "PRO",
+      active: true,
+      description: "Founder / owner Pro access",
+      maxRedemptions: null,
+    },
+    create: {
+      code: "BETEDGE-PRO-OWNER",
+      plan: "PRO",
+      active: true,
+      description: "Founder / owner Pro access",
+      maxRedemptions: null,
+    },
+  });
+
   // Historical graded picks for performance tracker
   const today = utcDateOnly();
   await prisma.pick.deleteMany({ where: { modelVersion: "seed-v1" } });

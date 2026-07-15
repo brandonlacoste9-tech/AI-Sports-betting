@@ -64,6 +64,7 @@ model User {
   subscription Subscription?
   pickViews    PickView[]
   apiKeys      ApiKey[]
+  promoRedeems PromoRedemption[]
 
   @@index([email])
   @@index([plan])
@@ -283,4 +284,36 @@ model ApiKeyUsage {
 
   @@index([apiKeyId, createdAt])
   @@index([createdAt])
+}
+
+/// Promo / founder codes that grant a plan without Stripe
+model PromoCode {
+  id             String    @id @default(cuid())
+  /// Stored uppercase, e.g. BETEDGE-PRO-OWNER
+  code           String    @unique
+  plan           Plan      @default(PRO)
+  description    String?
+  maxRedemptions Int? // null = unlimited
+  redemptionCount Int      @default(0)
+  active         Boolean   @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  redemptions PromoRedemption[]
+
+  @@index([active])
+}
+
+model PromoRedemption {
+  id          String   @id @default(cuid())
+  promoCodeId String
+  userId      String
+  createdAt   DateTime @default(now())
+
+  promoCode PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([promoCodeId, userId])
+  @@index([userId])
 }
