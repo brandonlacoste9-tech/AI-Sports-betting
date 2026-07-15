@@ -1,4 +1,5 @@
 import { fetchApiSportsSoccerEvents } from "@/lib/odds/api-sports";
+import { fetchStakeOddsEvents, hasStakeApi } from "@/lib/odds/stake";
 import type { OddsEvent } from "@/lib/odds/types";
 import type { Sport } from "@prisma/client";
 
@@ -13,11 +14,17 @@ const SPORT_KEYS: Record<Sport, string> = {
 
 const DEFAULT_SPORTS: Sport[] = ["NFL", "NBA", "MLB", "NHL", "UFC", "SOCCER"];
 
-export type OddsSource = "the-odds-api" | "api-sports" | "merged" | "none";
+export type OddsSource =
+  | "stake"
+  | "the-odds-api"
+  | "api-sports"
+  | "merged"
+  | "none";
 
 /**
  * Fetch live odds only — no mock fallback.
- * Requires ODDS_API_KEY and/or API_SPORTS_KEY.
+ * Prefers Stake (affiliate partner) when STAKE_API_KEY is set,
+ * then The Odds API + API-Sports soccer.
  */
 export async function fetchOddsEvents(sports?: Sport[]): Promise<{
   events: OddsEvent[];
@@ -28,11 +35,39 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
   const events: OddsEvent[] = [];
   const sources: OddsSource[] = [];
 
+  // Stake first — partner book for pick generation + affiliate alignment
+  if (hasStakeApi()) {
+    try {
+      const stakeEvents = await fetchStakeOddsEvents(targetSports);
+      if (stakeEvents.length) {
+        events.push(...stakeEvents);
+        sources.push("stake");
+      }
+    } catch (err) {
+      console.warn("[odds] stake error", err);
+    }
+  } else {
+    console.warn("[odds] STAKE_API_KEY is not set");
+  }
+
   const oddsKey = process.env.ODDS_API_KEY;
   if (oddsKey) {
     const fromOddsApi = await fetchFromTheOddsApi(targetSports, oddsKey);
     if (fromOddsApi.length) {
-      events.push(...fromOddsApi);
+      // Dedupe by sport+teams when Stake already covered the game
+      const existing = new Set(
+        events.map(
+          (e) =>
+            `${e.sport}|${e.homeTeam.toLowerCase()}|${e.awayTeam.toLowerCase()}`,
+        ),
+      );
+      for (const ev of fromOddsApi) {
+        const k = `${ev.sport}|${ev.homeTeam.toLowerCase()}|${ev.awayTeam.toLowerCase()}`;
+        if (!existing.has(k)) {
+          events.push(ev);
+          existing.add(k);
+        }
+      }
       sources.push("the-odds-api");
     }
   } else {
@@ -45,7 +80,9 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
       const soccer = await fetchApiSportsSoccerEvents({ maxFixtures: 5 });
       if (soccer.length) {
         const existingNames = new Set(
-          events.filter((e) => e.sport === "SOCCER").map((e) => e.eventName.toLowerCase()),
+          events
+            .filter((e) => e.sport === "SOCCER")
+            .map((e) => e.eventName.toLowerCase()),
         );
         for (const s of soccer) {
           if (!existingNames.has(s.eventName.toLowerCase())) {
@@ -66,7 +103,7 @@ export async function fetchOddsEvents(sports?: Sport[]): Promise<{
   }
 
   const source: OddsSource =
-    sources.length > 1 ? "merged" : sources[0] === "api-sports" ? "api-sports" : "the-odds-api";
+    sources.length > 1 ? "merged" : (sources[0] ?? "none");
 
   return { events, source, sources };
 }
