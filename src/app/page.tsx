@@ -81,7 +81,7 @@ export default function LandingPage() {
               </Link>
               <Link href="/games">
                 <Button size="lg" variant="secondary">
-                  Play free games
+                  Stake games
                 </Button>
               </Link>
               <Link href="/login">
