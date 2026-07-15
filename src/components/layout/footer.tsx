@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Disclaimer } from "@/components/shared/disclaimer";
+import { useT } from "@/components/providers/locale-provider";
 
 export function Footer() {
+  const t = useT();
+
   return (
     <footer className="border-t border-card-border bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10">
@@ -11,19 +16,19 @@ export function Footer() {
           </div>
           <div className="flex gap-4 text-sm text-muted">
             <Link href="/#pricing" className="hover:text-foreground">
-              Pricing
+              {t.nav.pricing}
             </Link>
             <Link href="/login" className="hover:text-foreground">
-              Login
+              {t.nav.login}
             </Link>
             <Link href="/register" className="hover:text-foreground">
-              Sign up
+              {t.nav.signUp}
             </Link>
           </div>
         </div>
         <Disclaimer />
         <p className="text-xs text-muted/70">
-          © {new Date().getFullYear()} BetEdge AI. Not a sportsbook. Tips & analytics only.
+          © {new Date().getFullYear()} BetEdge AI. {t.footer.notSportsbook}
         </p>
       </div>
     </footer>

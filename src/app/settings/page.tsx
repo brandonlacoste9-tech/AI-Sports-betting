@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { SettingsClient } from "./settings-client";
+import { SettingsHeadings } from "./settings-headings";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -26,8 +27,7 @@ export default async function SettingsPage({
 
   return (
     <div className="bg-grid mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-      <p className="mt-1 text-muted">Profile, plan, and billing</p>
+      <SettingsHeadings />
       {params.checkout === "success" && (
         <p className="mt-4 rounded-lg border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
           Payment successful. Your plan updates within a few seconds after Stripe webhook.

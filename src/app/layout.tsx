@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
+import { LocaleProvider } from "@/components/providers/locale-provider";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale, type Locale } from "@/lib/i18n/dictionaries";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -43,18 +46,24 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get(LOCALE_COOKIE)?.value;
+  const initialLocale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
+
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+    <html lang={initialLocale} className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="flex min-h-full flex-col antialiased">
         <AuthSessionProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <LocaleProvider initialLocale={initialLocale}>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </LocaleProvider>
         </AuthSessionProvider>
       </body>
     </html>

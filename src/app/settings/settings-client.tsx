@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ApiKeysPanel } from "@/components/settings/api-keys-panel";
+import { useT } from "@/components/providers/locale-provider";
 import type { Plan, SubscriptionStatus } from "@prisma/client";
 
 export function SettingsClient({
@@ -28,6 +29,7 @@ export function SettingsClient({
     hasStripe: boolean;
   } | null;
 }) {
+  const t = useT();
   const router = useRouter();
   const { update } = useSession();
   const [loading, setLoading] = useState<"BASIC" | "PRO" | "portal" | "promo" | null>(null);
@@ -108,25 +110,25 @@ export function SettingsClient({
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>Account details</CardDescription>
+          <CardTitle>{t.settings.profile}</CardTitle>
+          <CardDescription>{t.settings.profileDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div className="flex justify-between gap-4">
-            <span className="text-muted">Name</span>
+            <span className="text-muted">{t.common.name}</span>
             <span>{user.name ?? "—"}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-muted">Email</span>
+            <span className="text-muted">{t.common.email}</span>
             <span>{user.email}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-muted">Plan</span>
+            <span className="text-muted">{t.common.plan}</span>
             <Badge variant="accent">{plan}</Badge>
           </div>
           {subscription && (
             <div className="flex justify-between gap-4">
-              <span className="text-muted">Billing status</span>
+              <span className="text-muted">{t.settings.billingStatus}</span>
               <span>{subscription.status}</span>
             </div>
           )}
@@ -135,8 +137,8 @@ export function SettingsClient({
 
       <Card>
         <CardHeader>
-          <CardTitle>Subscription</CardTitle>
-          <CardDescription>Upgrade for unlimited picks and full analytics</CardDescription>
+          <CardTitle>{t.settings.subscription}</CardTitle>
+          <CardDescription>{t.settings.subscriptionDesc}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {error && <p className="text-sm text-danger">{error}</p>}
@@ -147,31 +149,31 @@ export function SettingsClient({
               disabled={loading !== null || plan === "BASIC" || plan === "PRO"}
               onClick={() => checkout("BASIC")}
             >
-              {loading === "BASIC" ? "Redirecting…" : "Basic — $19/mo"}
+              {loading === "BASIC" ? "…" : "Basic — $19/mo"}
             </Button>
             <Button
               variant={plan === "PRO" ? "secondary" : "default"}
               disabled={loading !== null || plan === "PRO"}
               onClick={() => checkout("PRO")}
             >
-              {loading === "PRO" ? "Redirecting…" : "Pro — $49/mo"}
+              {loading === "PRO" ? "…" : "Pro — $49/mo"}
             </Button>
             <Button
               variant="outline"
               disabled={loading !== null || !subscription?.hasStripe}
               onClick={portal}
             >
-              {loading === "portal" ? "Opening…" : "Manage billing"}
+              {loading === "portal" ? "…" : t.settings.manageBilling}
             </Button>
           </div>
 
           <div className="border-t border-card-border pt-4">
-            <p className="mb-2 text-sm font-medium">Have a promo code?</p>
+            <p className="mb-2 text-sm font-medium">{t.settings.promo}</p>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                placeholder="Enter promo code"
+                placeholder={t.settings.enterPromo}
                 className="sm:max-w-xs"
                 autoComplete="off"
               />
@@ -180,14 +182,10 @@ export function SettingsClient({
                 disabled={loading !== null || promoCode.trim().length < 4 || plan === "PRO"}
                 onClick={redeemPromo}
               >
-                {loading === "promo" ? "Applying…" : "Apply code"}
+                {loading === "promo" ? t.settings.applying : t.settings.applyCode}
               </Button>
             </div>
           </div>
-
-          <p className="text-xs text-muted">
-            Stripe test mode supported. Promo codes grant plan access without a card.
-          </p>
         </CardContent>
       </Card>
 
@@ -195,11 +193,11 @@ export function SettingsClient({
 
       <Card>
         <CardHeader>
-          <CardTitle>Session</CardTitle>
+          <CardTitle>{t.settings.session}</CardTitle>
         </CardHeader>
         <CardContent>
           <Button variant="danger" onClick={() => signOut({ callbackUrl: "/" })}>
-            Sign out
+            {t.settings.signOut}
           </Button>
         </CardContent>
       </Card>

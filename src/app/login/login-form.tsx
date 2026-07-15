@@ -7,8 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { useT } from "@/components/providers/locale-provider";
 
 export function LoginForm() {
+  const t = useT();
   const router = useRouter();
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") ?? "/dashboard";
@@ -28,7 +30,7 @@ export function LoginForm() {
     });
     setLoading(false);
     if (res?.error) {
-      setError("Invalid email or password");
+      setError(t.auth.invalidCreds);
       return;
     }
     router.push(callbackUrl);
@@ -40,7 +42,7 @@ export function LoginForm() {
       <CardContent className="space-y-4 p-6">
         <form onSubmit={onSubmit} className="space-y-4">
           <label className="grid gap-1.5 text-sm">
-            <span className="text-muted">Email</span>
+            <span className="text-muted">{t.common.email}</span>
             <Input
               type="email"
               required
@@ -50,7 +52,7 @@ export function LoginForm() {
             />
           </label>
           <label className="grid gap-1.5 text-sm">
-            <span className="text-muted">Password</span>
+            <span className="text-muted">{t.common.password}</span>
             <Input
               type="password"
               required
@@ -62,25 +64,14 @@ export function LoginForm() {
           </label>
           {error && <p className="text-sm text-danger">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in…" : "Log in"}
+            {loading ? t.auth.signingIn : t.nav.login}
           </Button>
         </form>
 
-        {process.env.NEXT_PUBLIC_HAS_GOOGLE === "true" && (
-          <Button
-            type="button"
-            variant="secondary"
-            className="w-full"
-            onClick={() => signIn("google", { callbackUrl })}
-          >
-            Continue with Google
-          </Button>
-        )}
-
         <p className="text-center text-sm text-muted">
-          No account?{" "}
+          {t.auth.noAccount}{" "}
           <Link href="/register" className="text-accent hover:underline">
-            Sign up
+            {t.nav.signUp}
           </Link>
         </p>
       </CardContent>

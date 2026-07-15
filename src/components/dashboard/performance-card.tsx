@@ -9,6 +9,8 @@ export function PerformanceCard({
   roiPercent,
   totalPicks,
   limited,
+  title = "Performance tracker",
+  description,
 }: {
   wins: number;
   losses: number;
@@ -18,15 +20,18 @@ export function PerformanceCard({
   roiPercent: number;
   totalPicks: number;
   limited?: boolean;
+  title?: string;
+  description?: string;
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Performance tracker</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
-          {limited
-            ? "Free plan shows summary only. Upgrade for full ROI analytics."
-            : "All-time graded picks (demo + live)."}
+          {description ??
+            (limited
+              ? "Free plan shows summary only. Upgrade for full ROI analytics."
+              : "All-time graded picks (demo + live).")}
         </CardDescription>
       </CardHeader>
       <CardContent>

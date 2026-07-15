@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Disclaimer } from "@/components/shared/disclaimer";
+import { useT } from "@/components/providers/locale-provider";
 import {
   Activity,
   Brain,
@@ -14,88 +17,35 @@ import {
   Zap,
 } from "lucide-react";
 
-const features = [
-  {
-    icon: Brain,
-    title: "AI pick engine",
-    body: "Grok analyzes markets, injuries, weather, and line moves into structured daily picks.",
-  },
-  {
-    icon: Target,
-    title: "Edge + confidence",
-    body: "Every pick ships with estimated edge, confidence score, and unit guidance.",
-  },
-  {
-    icon: LineChart,
-    title: "Performance tracker",
-    body: "Transparent win rate, units, and ROI — no cherry-picked screenshots.",
-  },
-  {
-    icon: Zap,
-    title: "Bankroll tools",
-    body: "Fractional Kelly helper and unit sizing so you size bets like a pro.",
-  },
-  {
-    icon: Activity,
-    title: "Multi-sport coverage",
-    body: "NFL, NBA, MLB, NHL, UFC, and Soccer prioritized for daily slates.",
-  },
-  {
-    icon: Shield,
-    title: "Responsible by design",
-    body: "Clear disclaimers, no guaranteed profits, entertainment-first product framing.",
-  },
-  {
-    icon: LineChart,
-    title: "Odds board + API",
-    body: "Public odds board, line-move history for paid plans, and a developer API with keys.",
-  },
-];
-
-const tiers = [
-  {
-    name: "Free",
-    price: "$0",
-    blurb: "Taste the edge",
-    features: ["1 pick per day", "7-day limited history", "Win-rate summary", "Bankroll calculator"],
-    cta: "Start free",
-    href: "/register",
-    highlight: false,
-  },
-  {
-    name: "Basic",
-    price: "$19",
-    blurb: "Full daily board",
-    features: [
-      "Unlimited daily picks",
-      "Full history & analytics",
-      "Line moves board",
-      "Odds API (2k req/day)",
-    ],
-    cta: "Go Basic",
-    href: "/register?plan=basic",
-    highlight: true,
-  },
-  {
-    name: "Pro",
-    price: "$49",
-    blurb: "High-edge unlocks",
-    features: [
-      "Everything in Basic",
-      "Premium high-confidence picks",
-      "Odds API (20k req/day)",
-      "Advanced ROI tracking",
-    ],
-    cta: "Go Pro",
-    href: "/register?plan=pro",
-    highlight: false,
-  },
-];
+const featureIcons = [Brain, Target, LineChart, Zap, Activity, Shield, LineChart];
 
 export default function LandingPage() {
+  const t = useT();
+  const L = t.landing;
+
+  const tiers = [
+    {
+      ...L.tiers[0],
+      price: "$0",
+      href: "/register",
+      highlight: false,
+    },
+    {
+      ...L.tiers[1],
+      price: "$19",
+      href: "/register?plan=basic",
+      highlight: true,
+    },
+    {
+      ...L.tiers[2],
+      price: "$49",
+      href: "/register?plan=pro",
+      highlight: false,
+    },
+  ];
+
   return (
     <div className="bg-grid">
-      {/* Hero — multi-sport collage (brighter so sports read clearly) */}
       <section className="relative min-h-[70vh] overflow-hidden border-b border-card-border/40 md:min-h-[78vh]">
         <div className="absolute inset-0">
           <Image
@@ -106,7 +56,6 @@ export default function LandingPage() {
             sizes="100vw"
             className="object-cover object-center brightness-110 contrast-110 saturate-125"
           />
-          {/* Light scrim only — keep image visible, ease into page bottom */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-background" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
         </div>
@@ -114,26 +63,24 @@ export default function LandingPage() {
         <div className="relative mx-auto flex min-h-[70vh] max-w-6xl items-center px-4 py-16 md:min-h-[78vh] md:py-24">
           <div className="mx-auto w-full max-w-3xl rounded-2xl border border-white/10 bg-black/55 px-6 py-10 text-center shadow-2xl shadow-black/50 backdrop-blur-md md:px-10 md:py-12">
             <Badge variant="accent" className="mb-4 shadow-lg shadow-black/40">
-              <Sparkles className="mr-1 h-3 w-3" /> AI-powered betting intelligence
+              <Sparkles className="mr-1 h-3 w-3" /> {L.badge}
             </Badge>
             <h1 className="text-balance text-4xl font-bold tracking-tight text-white drop-shadow-md md:text-6xl">
-              Daily sports picks with{" "}
-              <span className="text-accent">real edge analysis</span>
+              {L.heroTitleBefore}{" "}
+              <span className="text-accent">{L.heroTitleAccent}</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-zinc-200">
-              BetEdge AI turns odds, injuries, weather, and line movement into clear, ranked picks
-              for NFL, NBA, MLB, NHL, UFC, and Soccer — so you stop doomscrolling research at
-              midnight.
+              {L.heroBody}
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="glow-accent">
-                  Get today&apos;s free pick
+                  {L.ctaFree}
                 </Button>
               </Link>
               <Link href="/login">
                 <Button size="lg" variant="secondary">
-                  Log in
+                  {L.ctaLogin}
                 </Button>
               </Link>
             </div>
@@ -144,61 +91,60 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
       <section id="features" className="mx-auto max-w-6xl px-4 py-16">
         <div className="mb-10 max-w-2xl">
-          <h2 className="text-3xl font-bold tracking-tight">Built for bettors who want process</h2>
-          <p className="mt-2 text-muted">
-            Not a sportsbook. A research co-pilot that ships a board you can actually action.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">{L.featuresTitle}</h2>
+          <p className="mt-2 text-muted">{L.featuresSubtitle}</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f) => (
-            <Card key={f.title}>
-              <CardHeader>
-                <f.icon className="mb-2 h-6 w-6 text-accent" />
-                <CardTitle className="text-base">{f.title}</CardTitle>
-                <CardDescription>{f.body}</CardDescription>
-              </CardHeader>
-            </Card>
-          ))}
+          {L.features.map((f, i) => {
+            const Icon = featureIcons[i] ?? Brain;
+            return (
+              <Card key={f.title}>
+                <CardHeader>
+                  <Icon className="mb-2 h-6 w-6 text-accent" />
+                  <CardTitle className="text-base">{f.title}</CardTitle>
+                  <CardDescription>{f.body}</CardDescription>
+                </CardHeader>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
-      {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-6xl px-4 py-16">
         <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold tracking-tight">Simple freemium pricing</h2>
-          <p className="mt-2 text-muted">Cancel anytime. Stripe-secured billing.</p>
+          <h2 className="text-3xl font-bold tracking-tight">{L.pricingTitle}</h2>
+          <p className="mt-2 text-muted">{L.pricingSubtitle}</p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {tiers.map((t) => (
+          {tiers.map((tier) => (
             <Card
-              key={t.name}
-              className={t.highlight ? "border-accent/50 glow-accent" : undefined}
+              key={tier.name}
+              className={tier.highlight ? "border-accent/50 glow-accent" : undefined}
             >
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  {t.name}
-                  {t.highlight && <Badge variant="accent">Popular</Badge>}
+                  {tier.name}
+                  {tier.highlight && <Badge variant="accent">{L.popular}</Badge>}
                 </CardTitle>
-                <CardDescription>{t.blurb}</CardDescription>
+                <CardDescription>{tier.blurb}</CardDescription>
                 <div className="pt-2 text-4xl font-bold">
-                  {t.price}
-                  <span className="text-base font-normal text-muted">/mo</span>
+                  {tier.price}
+                  <span className="text-base font-normal text-muted">{L.perMonth}</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2 text-sm text-muted">
-                  {t.features.map((feat) => (
+                  {tier.features.map((feat) => (
                     <li key={feat} className="flex gap-2">
                       <span className="text-accent">✓</span> {feat}
                     </li>
                   ))}
                 </ul>
-                <Link href={t.href} className="block">
-                  <Button className="w-full" variant={t.highlight ? "default" : "secondary"}>
-                    {t.cta}
+                <Link href={tier.href} className="block">
+                  <Button className="w-full" variant={tier.highlight ? "default" : "secondary"}>
+                    {tier.cta}
                   </Button>
                 </Link>
               </CardContent>
@@ -207,18 +153,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="mx-auto max-w-6xl px-4 py-16">
         <Card className="overflow-hidden border-accent/20">
           <CardContent className="flex flex-col items-start justify-between gap-6 p-8 md:flex-row md:items-center">
             <div>
-              <h2 className="text-2xl font-bold">Ship your edge before first pitch / kickoff</h2>
-              <p className="mt-2 max-w-xl text-muted">
-                Join freemium, unlock one AI pick today, upgrade when you want the full board.
-              </p>
+              <h2 className="text-2xl font-bold">{L.ctaSectionTitle}</h2>
+              <p className="mt-2 max-w-xl text-muted">{L.ctaSectionBody}</p>
             </div>
             <Link href="/register">
-              <Button size="lg">Create free account</Button>
+              <Button size="lg">{L.ctaCreate}</Button>
             </Link>
           </CardContent>
         </Card>

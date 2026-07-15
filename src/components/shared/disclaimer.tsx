@@ -1,11 +1,11 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useT } from "@/components/providers/locale-provider";
 
 export function Disclaimer({ className }: { className?: string }) {
+  const t = useT();
   return (
-    <p className={cn("text-xs leading-relaxed text-muted", className)}>
-      For entertainment purposes only. Gambling involves risk. Past performance does not guarantee
-      future results. You must be 18+/21+ (depending on jurisdiction) to use sports betting
-      services. Bet responsibly.
-    </p>
+    <p className={cn("text-xs leading-relaxed text-muted", className)}>{t.disclaimer}</p>
   );
 }

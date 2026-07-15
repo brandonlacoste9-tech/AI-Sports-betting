@@ -8,9 +8,13 @@ import { americanToDecimal } from "@/lib/utils";
 export function BankrollCalculator({
   defaultBankroll = 1000,
   defaultUnit = 10,
+  title = "Bankroll calculator",
+  description = "Unit sizing + fractional Kelly helper. Educational only — not financial advice.",
 }: {
   defaultBankroll?: number;
   defaultUnit?: number;
+  title?: string;
+  description?: string;
 }) {
   const [bankroll, setBankroll] = useState(defaultBankroll);
   const [unitPct, setUnitPct] = useState(
@@ -43,10 +47,8 @@ export function BankrollCalculator({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bankroll calculator</CardTitle>
-        <CardDescription>
-          Unit sizing + fractional Kelly helper. Educational only — not financial advice.
-        </CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2">
         <label className="grid gap-1.5 text-sm">
