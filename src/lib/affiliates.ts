@@ -20,6 +20,16 @@ export function stakeCasinoGameUrl(slug: string): string {
   return `https://stake.com/casino/games/${encodeURIComponent(clean)}?c=${STAKE_AFFILIATE_CODE}`;
 }
 
+/** Stake slots lobby. */
+export function stakeSlotsUrl(): string {
+  return `https://stake.com/casino/group/slots?c=${STAKE_AFFILIATE_CODE}`;
+}
+
+/** Stake casino home / full lobby. */
+export function stakeCasinoUrl(): string {
+  return `https://stake.com/casino/home?c=${STAKE_AFFILIATE_CODE}`;
+}
+
 /** Stake sportsbook home with affiliate code. */
 export function stakeSportsUrl(): string {
   return `https://stake.com/sports/home?c=${STAKE_AFFILIATE_CODE}`;
