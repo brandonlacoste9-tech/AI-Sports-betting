@@ -1,23 +1,26 @@
 import type { Metadata } from "next";
 import { StakeGamesHub } from "@/components/games/stake-games-hub";
-import {
-  stakeCasinoUrl,
-  stakeSlotsUrl,
-  stakeSportsUrl,
-} from "@/lib/affiliates";
+import { getStakeGamesForHub } from "@/lib/games/stake-games";
 
 export const metadata: Metadata = {
   title: "Slots & Casino — Stake",
   description:
-    "Slots and casino on Stake via BetEdge — full slots lobby, casino home, and sportsbook. Affiliate partner.",
+    "Slots and casino on Stake via BetEdge — Originals, table, instant, and full slots lobby. Affiliate partner.",
 };
 
-export default function GamesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function GamesPage() {
+  const data = await getStakeGamesForHub();
   return (
     <StakeGamesHub
-      sportsHref={stakeSportsUrl()}
-      slotsHref={stakeSlotsUrl()}
-      casinoHref={stakeCasinoUrl()}
+      slots={data.slots}
+      table={data.table}
+      instant={data.instant}
+      sportsHref={data.sportsHref}
+      slotsHref={data.slotsHref}
+      casinoHref={data.casinoHref}
+      source={data.source}
     />
   );
 }
