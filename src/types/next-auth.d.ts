@@ -13,6 +13,8 @@ declare module "next-auth" {
   interface User {
     role?: Role;
     plan?: Plan;
+    /** Extend session when user checked "Remember me" */
+    remember?: boolean;
   }
 }
 
@@ -21,5 +23,6 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: Role;
     plan?: Plan;
+    remember?: boolean;
   }
 }

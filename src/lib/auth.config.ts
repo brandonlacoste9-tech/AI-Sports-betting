@@ -47,6 +47,10 @@ export const authConfig = {
       return session;
     },
   },
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    // Max cookie lifetime (Remember me uses full window; otherwise JWT expires sooner)
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   trustHost: true,
 } satisfies NextAuthConfig;

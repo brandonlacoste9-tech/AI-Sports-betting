@@ -68,6 +68,7 @@ export type Dictionary = {
     registerTitle: string;
     registerSubtitle: string;
     passwordMin: string;
+    rememberMe: string;
     signingIn: string;
     creating: string;
     createAccount: string;
@@ -256,6 +257,7 @@ const en: Dictionary = {
     registerTitle: "Create your account",
     registerSubtitle: "Free tier includes 1 AI pick every day",
     passwordMin: "Password (min 8)",
+    rememberMe: "Remember me",
     signingIn: "Signing in…",
     creating: "Creating…",
     createAccount: "Create account",
@@ -447,6 +449,7 @@ const fr: Dictionary = {
     registerTitle: "Créer votre compte",
     registerSubtitle: "Le forfait gratuit inclut 1 choix IA par jour",
     passwordMin: "Mot de passe (min. 8)",
+    rememberMe: "Se souvenir de moi",
     signingIn: "Connexion…",
     creating: "Création…",
     createAccount: "Créer le compte",
